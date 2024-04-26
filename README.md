@@ -17,6 +17,27 @@ A Unity package that contains a collection of functions for generating various k
 
 All noise generators also include functions for generating a fractal version.
 
+## Installation
+
+### Option 1: Unity Package Manager
+
+Open the Package Manager window, click on "Add Package from Git URL ...", then enter the following:
+```
+https://github.com/d3tonat0r/unitynoise.git
+```
+
+### Option 2: Manually Editing packages.json
+
+Add the following line to your project's `Packages/manifest.json`:
+
+```json
+"com.example.package": "https://github.com/d3tonat0r/unitynoise.git"
+```
+
+### Option 3: Manual Installation
+
+You can also download this repository and extract the ZIP file anywhere inside your project's Assets folder.
+
 ## Usage
 
 ### In Scripts
@@ -58,24 +79,3 @@ settings.persistence = 0.5;
 settings.lacunarity = 2.0;
 float noise = ComputePerlinNoise3D(position.xyz, settings);
 ```
-
-## Installation
-
-### Option 1: Unity Package Manager
-
-Open the Package Manager window, click on "Add Package from Git URL ...", then enter the following:
-```
-https://github.com/d3tonat0r/unitynoise.git
-```
-
-### Option 2: Manually Editing packages.json
-
-Add the following line to your project's `Packages/manifest.json`:
-
-```json
-"com.example.package": "https://github.com/d3tonat0r/unitynoise.git"
-```
-
-### Option 3: Manual Installation
-
-You can also download this repository and extract the ZIP file anywhere inside your project's Assets folder.
