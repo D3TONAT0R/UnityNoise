@@ -23,7 +23,7 @@ All noise generators also include functions for generating a fractal version.
 
 All noise generators are found inside the ```UnityNoise``` namespace.
 
-Examples:
+Example:
 ```csharp
 using UnityNoise;
 
@@ -46,13 +46,12 @@ Add a reference to the Include file you want to use, e.g:
 #include "Packages/com.github.d3tonat0r.unitynoise/Shaders/PerlinNoise.cginc"
 ```
 
-Noise can then be generated like so:
-```
+Example:
+```hlsl
+//Simple 3D Perlin
 float noise = GetPerlinNoise3D(position.xyz);
-```
 
-To create fractal noise you also need to pass a FractalSettings structure that described how the noise should be fractalized:
-```
+//Fractal 3D Perlin
 FractalSettings settings;
 settings.octaves = 4;
 settings.persistence = 0.5;
