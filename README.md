@@ -15,8 +15,36 @@ A Unity package that contains a collection of functions for generating various k
 |Voronoi        |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Cellular       |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 
-## Installation
+All noise generators also include functions for generating a fractal version.
 
+## Usage
+
+### In Scripts
+
+All noise generators are found inside the ```UnityNoise``` namespace.
+
+### In Shaders
+
+Add a reference to the Include file you want to use, e.g:
+```
+#include "Packages/com.github.d3tonat0r.unitynoise/Shaders/PerlinNoise.cginc"
+```
+
+Noise can then be generated like so:
+```
+float noise = GetPerlinNoise3D(position.xyz);
+```
+
+To create fractal noise you also need to pass a FractalSettings structure that described how the noise should be fractalized:
+```
+FractalSettings settings;
+settings.octaves = 4;
+settings.persistence = 0.5;
+settings.lacunarity = 2.0;
+float noise = ComputePerlinNoise3D(position.xyz, settings);
+```
+
+## Installation
 
 ### Option 1: Unity Package Manager
 
