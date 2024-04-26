@@ -23,6 +23,18 @@ All noise generators also include functions for generating a fractal version.
 
 All noise generators are found inside the ```UnityNoise``` namespace.
 
+Examples:
+```csharp
+Vector3 pos = new Vector3(0.5f, 1.0f, 2.0f);
+
+//Simple 3D Perlin 
+float noise = PerlinNoise.Instance.GetNoise3D(pos);
+
+//Fractal 3D Perlin (parameters: octaves, lacunarity, persistence, scale)
+FractalSettings fractal = new FractalSettings(4, 2f, 0.5f, 1);
+float noise = PerlinNoise.Instance.GetNoise3D(pos, fractal);
+```
+
 ### In Shaders
 
 Add a reference to the Include file you want to use, e.g:
