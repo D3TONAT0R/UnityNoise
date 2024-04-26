@@ -1,8 +1,10 @@
 {
-    "name": "TEMPLATE.Editor",
-    "references": [],
+    "name": "D3T.UnityNoise.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0cfc74eebb099c145bbc30cee3b10269"
+    ],
     "includePlatforms": [
-        "CloudRendering",
         "Editor"
     ],
     "excludePlatforms": [],

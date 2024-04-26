@@ -1,5 +1,6 @@
 {
-    "name": "TEMPLATE",
+    "name": "D3T.UnityNoise",
+    "rootNamespace": "",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
