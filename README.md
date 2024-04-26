@@ -25,6 +25,10 @@ All noise generators are found inside the ```UnityNoise``` namespace.
 
 Examples:
 ```csharp
+using UnityNoise;
+
+-----
+
 Vector3 pos = new Vector3(0.5f, 1.0f, 2.0f);
 
 //Simple 3D Perlin 
