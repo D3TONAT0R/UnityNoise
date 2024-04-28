@@ -44,6 +44,7 @@ namespace UnityNoiseEditor
 		[Range(0.01f, 1)]
 		public float depth = 1f;
 		public VoronoiSettings voronoiSettings = VoronoiSettings.Default;
+		public bool tiled = false;
 
 		public int seed = 0;
 
@@ -72,7 +73,8 @@ namespace UnityNoiseEditor
 			var offset = new Vector2(Random.value * short.MaxValue, Random.value * short.MaxValue);
 			Vector2 actualScale = scale;
 			actualScale.x *= resolution.x / (float)resolution.y;
-			var settings = new FractalSettings(octaves, lacunarity, persistence, actualScale, offset, depth, voronoiSettings, false);
+			Vector2 repeat = tiled ? new Vector2(actualScale.x, actualScale.y) : Vector2.zero;
+			var settings = new FractalSettings(octaves, lacunarity, persistence, actualScale, offset, depth, voronoiSettings, false, repeat);
 			int width = resolution.x;
 			float fwidth = resolution.x;
 			float fheight = resolution.y;

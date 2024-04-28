@@ -30,10 +30,11 @@ namespace UnityNoise
 			float intensity = 1f;
 
 			var scale = settings.scale;
+			var repeat = settings.repeat;
 			for(int i = 0; i < settings.octaves; i++)
 			{
 				var offsetPos = settings.offset + Vector4.Scale(pos, scale);
-				float value = CalcNoise(dimensions, offsetPos, settings);
+				float value = CalcNoise(dimensions, offsetPos, settings, repeat);
 				if(i == 0)
 				{
 					noise = value;
@@ -43,6 +44,7 @@ namespace UnityNoise
 					noise += value * intensity;
 				}
 				scale *= settings.lacunarity;
+				repeat *= settings.lacunarity;
 				intensity *= settings.persistence;
 			}
 			noise *= settings.depth;
@@ -51,7 +53,7 @@ namespace UnityNoise
 			return noise;
 		}
 
-		protected abstract float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings);
+		protected abstract float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings, Vector4 repeat);
 
 		protected static float Hash(int x, int y, int z, int w)
 		{

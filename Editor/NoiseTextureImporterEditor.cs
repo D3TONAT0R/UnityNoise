@@ -29,6 +29,7 @@ namespace UnityNoiseEditor
 				}
 			}
 			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.depth)));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.tiled)));
 
 			GUILayout.Space(10);
 			GUILayout.Label("Fractal Settings", EditorStyles.boldLabel);

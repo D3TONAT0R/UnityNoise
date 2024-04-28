@@ -5,7 +5,7 @@ namespace UnityNoise
 	public class VoronoiNoise : NoiseGeneratorBase<VoronoiNoise>
 	{
 
-		protected override float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings)
+		protected override float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings, Vector4 repeat)
 		{
 			float d = settings.voronoiSettings.voronoiDistortion * 0.8f;
 			DistanceType dt = settings.voronoiSettings.distanceType;

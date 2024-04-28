@@ -49,10 +49,11 @@ namespace UnityNoise
 		[Min(0.001f)]
 		public float depth;
 		public VoronoiSettings voronoiSettings;
+		public Vector2 repeat;
 
 		public bool clamp;
 
-		public FractalSettings(int octaves, float lacunarity, float persistence, Vector4 scale, Vector4 offset = default, float depth = 1f, VoronoiSettings? voronoiSettings = null, bool clamp = false)
+		public FractalSettings(int octaves, float lacunarity, float persistence, Vector4 scale, Vector4 offset = default, float depth = 1f, VoronoiSettings? voronoiSettings = null, bool clamp = false, Vector2 repeat = default)
 		{
 			this.octaves = octaves;
 			this.lacunarity = lacunarity;
@@ -62,9 +63,10 @@ namespace UnityNoise
 			this.depth = depth;
 			this.voronoiSettings = voronoiSettings ?? VoronoiSettings.Default;
 			this.clamp = clamp;
+			this.repeat = repeat;
 		}
 
-		public FractalSettings(int octaves, float lacunarity, float persistence, float scale, Vector4 offset = default, float depth = 1f, VoronoiSettings? voronoiSettings = null, bool clamp = false)
+		public FractalSettings(int octaves, float lacunarity, float persistence, float scale, Vector4 offset = default, float depth = 1f, VoronoiSettings? voronoiSettings = null, bool clamp = false, Vector2 repeat = default)
 		{
 			this.octaves = octaves;
 			this.lacunarity = lacunarity;
@@ -74,6 +76,7 @@ namespace UnityNoise
 			this.depth = depth;
 			this.voronoiSettings = voronoiSettings ?? VoronoiSettings.Default;
 			this.clamp = clamp;
+			this.repeat = repeat;
 		}
 	}
 }

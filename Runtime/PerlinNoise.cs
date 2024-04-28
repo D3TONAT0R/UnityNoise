@@ -4,7 +4,7 @@ namespace UnityNoise
 {
 	public class PerlinNoise : NoiseGeneratorBase<PerlinNoise>
 	{
-		protected override float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings)
+		protected override float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings, Vector4 repeat)
 		{
 			int x1 = Mathf.FloorToInt(pos.x);
 			int x2 = x1 + 1;
@@ -20,6 +20,30 @@ namespace UnityNoise
 			float wy = pos.y - y1;
 			float wz = pos.z - z1;
 			float ww = pos.w - w1;
+
+			if(repeat.x > 0) { 
+				x1 = (int)Mathf.Repeat(x1, repeat.x); 
+				x2 = (int)Mathf.Repeat(x2, repeat.x); 
+				pos.x = Mathf.Repeat(pos.x, repeat.x);
+			}
+			if(repeat.y > 0)
+			{
+				y1 = (int)Mathf.Repeat(y1, repeat.y); 
+				y2 = (int)Mathf.Repeat(y2, repeat.y); 
+				pos.y = Mathf.Repeat(pos.y, repeat.y);
+			}
+			if(repeat.z > 0)
+			{
+				z1 = (int)Mathf.Repeat(z1, repeat.z); 
+				z2 = (int)Mathf.Repeat(z2, repeat.z); 
+				pos.z = Mathf.Repeat(pos.z, repeat.z);
+			}
+			if(repeat.w > 0)
+			{
+				w1 = (int)Mathf.Repeat(w1, repeat.w); 
+				w2 = (int)Mathf.Repeat(w2, repeat.w); 
+				pos.w = Mathf.Repeat(pos.w, repeat.w);
+			}
 
 			if(dimensions == 1)
 			{
@@ -92,7 +116,7 @@ namespace UnityNoise
 		{
 			float random = (float)(2920f * Mathf.Sin(i.x * 21942f + i.y * 171324f + 8912f) * Mathf.Cos(i.x * 23157f * i.y * 217832f + 9758f));
 			var vec2 = new Vector2(
-				(float)Mathf.Sin(random), 
+				(float)Mathf.Sin(random),
 				dimensions >= 2 ? (float)Mathf.Cos(random) : 0);
 			if(dimensions <= 2)
 			{
@@ -103,9 +127,9 @@ namespace UnityNoise
 			{
 				float random2 = (float)(7218f * Mathf.Sin(i.z * 17261f + i.w * 251753f + 9124f) * Mathf.Cos(i.z * 57162f * i.w * 35172f + 3649f));
 				var vec4 = new Vector4(
-					vec2.x, 
-					vec2.y, 
-					(float)Mathf.Sin(random2), 
+					vec2.x,
+					vec2.y,
+					(float)Mathf.Sin(random2),
 					dimensions >= 4 ? (float)Mathf.Cos(random2) : 0);
 				//return vec4.normalized;
 				return vec4;

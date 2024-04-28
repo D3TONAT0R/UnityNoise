@@ -4,7 +4,7 @@ namespace UnityNoise
 {
 	public class CellularNoise : NoiseGeneratorBase<CellularNoise>
 	{
-		protected override float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings)
+		protected override float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings, Vector4 repeat)
 		{
 			if(dimensions == 1)
 			{
