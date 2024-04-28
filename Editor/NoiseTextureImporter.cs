@@ -47,7 +47,10 @@ namespace UnityNoiseEditor
 
 		public int seed = 0;
 
+		public bool useRemappingCurve = false;
+		public AnimationCurve remappingCurve = AnimationCurve.Linear(0, 0, 1, 1);
 		public Gradient gradient = new Gradient() { colorKeys = new GradientColorKey[] { new GradientColorKey(Color.black, 0), new GradientColorKey(Color.white, 1) } };
+
 		public bool showOutOfRangeValues = false;
 
 		[Space(10)]
@@ -73,24 +76,38 @@ namespace UnityNoiseEditor
 			int width = resolution.x;
 			float fwidth = resolution.x;
 			float fheight = resolution.y;
-			Color[] colors = new Color[resolution.x * resolution.y];
 
-			int[] histogramBands = new int[HISTOGRAM_BANDS];
+			float[] values = new float[resolution.x * resolution.y];
 			Parallel.For(0, resolution.y, y =>
 			{
 				for(int x = 0; x < resolution.x; x++)
 				{
 					var n = GetNoise(new Vector2(x / fwidth, y / fheight), settings);
-					colors[y * width + x] = gradient.Evaluate(n);
-					if(showOutOfRangeValues)
-					{
-						if(n < 0) colors[y * width + x] = Color.red;
-						else if(n > 1) colors[y * width + x] = Color.blue;
-					}
-					int band = Mathf.FloorToInt(Mathf.Clamp((int)(n * HISTOGRAM_BANDS), 0, HISTOGRAM_BANDS - 1));
-					histogramBands[band]++;
+					values[y * width + x] = n;
 				}
 			});
+
+			Color[] colors = new Color[resolution.x * resolution.y];
+			int[] histogramBands = new int[HISTOGRAM_BANDS];
+			for(int i = 0; i < values.Length; i++)
+			{
+				var v = values[i];
+				if(useRemappingCurve)
+				{
+					v = remappingCurve.Evaluate(v);
+				}
+				var color = gradient.Evaluate(v);
+				if(showOutOfRangeValues)
+				{
+					if(v < 0) color = Color.red;
+					else if(v > 1) color = Color.blue;
+				}
+				colors[i] = color;
+				int band = Mathf.FloorToInt(Mathf.Clamp((int)(v * HISTOGRAM_BANDS), 0, HISTOGRAM_BANDS - 1));
+				histogramBands[band]++;
+			}
+
+
 			histogram = new float[HISTOGRAM_BANDS];
 			for(int i = 0; i < HISTOGRAM_BANDS; i++)
 			{

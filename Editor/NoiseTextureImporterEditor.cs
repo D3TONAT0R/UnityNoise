@@ -10,7 +10,54 @@ namespace UnityNoiseEditor
 	{
 		public override void OnInspectorGUI()
 		{
-			base.OnInspectorGUI();
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.resolution)));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.noiseType)));
+
+			var noiseType = (NoiseTextureImporter.NoiseType)serializedObject.FindProperty(nameof(NoiseTextureImporter.noiseType)).intValue;
+			if(noiseType == NoiseTextureImporter.NoiseType.Voronoi)
+			{
+				EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.voronoiSettings)));
+			}
+
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.scale)));
+			using(new EditorGUILayout.HorizontalScope())
+			{
+				EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.seed)));
+				if(GUILayout.Button("Random", GUILayout.Width(60)))
+				{
+					serializedObject.FindProperty(nameof(NoiseTextureImporter.seed)).intValue = Random.Range(short.MinValue, short.MaxValue);
+				}
+			}
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.depth)));
+
+			GUILayout.Space(10);
+			GUILayout.Label("Fractal Settings", EditorStyles.boldLabel);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.octaves)));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.lacunarity)));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.persistence)));
+
+			GUILayout.Space(10);
+			GUILayout.Label("Mapping Settings", EditorStyles.boldLabel);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.useRemappingCurve)));
+			if(serializedObject.FindProperty(nameof(NoiseTextureImporter.useRemappingCurve)).boolValue)
+			{
+				var curveProp = serializedObject.FindProperty(nameof(NoiseTextureImporter.remappingCurve));
+				curveProp.animationCurveValue = EditorGUILayout.CurveField(curveProp.displayName, curveProp.animationCurveValue, 
+					Color.green, new Rect(0, 0, 1, 1));
+			}
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.gradient)));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.showOutOfRangeValues)));
+
+			GUILayout.Space(10);
+			GUILayout.Label("Texture Settings", EditorStyles.boldLabel);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.linear)));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.generateMipMaps)));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.wrapMode)));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.filterMode)));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.compression)));
+
+			ApplyRevertGUI();
+
 			GUILayout.Space(10);
 			GUILayout.Label("Histogram", EditorStyles.boldLabel);
 			var rect = EditorGUILayout.GetControlRect(false, 64);
