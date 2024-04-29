@@ -18,6 +18,10 @@ namespace UnityNoiseEditor
 			{
 				EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.voronoiSettings)));
 			}
+			else if(noiseType == NoiseTextureImporter.NoiseType.Cellular)
+			{
+				EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.pointFilteredCells)));
+			}
 
 			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.scale)));
 			using(new EditorGUILayout.HorizontalScope())

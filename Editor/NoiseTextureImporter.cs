@@ -45,6 +45,7 @@ namespace UnityNoiseEditor
 		public float depth = 1f;
 		public VoronoiSettings voronoiSettings = VoronoiSettings.Default;
 		public bool tiled = false;
+		public bool pointFilteredCells = false;
 
 		public int seed = 0;
 
@@ -70,11 +71,11 @@ namespace UnityNoiseEditor
 			resolution.y = Mathf.Clamp(resolution.y, 1, 4096);
 
 			Random.InitState(seed);
-			var offset = new Vector2(Random.value * short.MaxValue, Random.value * short.MaxValue);
+			var offset = new Vector2(Random.Range(short.MinValue, short.MaxValue), Random.Range(short.MinValue, short.MaxValue));
 			Vector2 actualScale = scale;
 			actualScale.x *= resolution.x / (float)resolution.y;
 			Vector2 repeat = tiled ? new Vector2(actualScale.x, actualScale.y) : Vector2.zero;
-			var settings = new FractalSettings(octaves, lacunarity, persistence, actualScale, offset, depth, voronoiSettings, false, repeat);
+			var settings = new FractalSettings(octaves, lacunarity, persistence, actualScale, offset, depth, voronoiSettings, false, repeat, pointFilteredCells);
 			int width = resolution.x;
 			float fwidth = resolution.x;
 			float fheight = resolution.y;
