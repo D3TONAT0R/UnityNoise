@@ -33,7 +33,7 @@ namespace UnityNoise
 			var repeat = settings.repeat;
 			for(int i = 0; i < settings.octaves; i++)
 			{
-				var offsetPos = settings.offset + Vector4.Scale(pos, scale);
+				var offsetPos = Vector4.Scale(pos, scale) + settings.offset;
 				float value = CalcNoise(dimensions, offsetPos, settings, repeat);
 				if(i == 0)
 				{
@@ -54,6 +54,23 @@ namespace UnityNoise
 		}
 
 		protected abstract float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings, Vector4 repeat);
+
+		protected int WrapCell(float pos, float repeat, float offset)
+		{
+			pos -= offset;
+			pos = Mathf.Repeat(pos, repeat);
+			return (int)(pos + offset);
+		}
+
+		protected Vector4 Wrap(Vector4 pos, Vector4 repeat, Vector4 offset)
+		{
+			pos -= offset;
+			if(repeat.x > 0) pos.x = Mathf.Repeat(pos.x, repeat.x);
+			if(repeat.y > 0) pos.y = Mathf.Repeat(pos.y, repeat.y);
+			if(repeat.z > 0) pos.z = Mathf.Repeat(pos.z, repeat.z);
+			if(repeat.w > 0) pos.w = Mathf.Repeat(pos.w, repeat.w);
+			return pos + offset;
+		}
 
 		protected static float Hash(int x, int y, int z, int w)
 		{

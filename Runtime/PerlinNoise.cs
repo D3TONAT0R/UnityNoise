@@ -21,28 +21,17 @@ namespace UnityNoise
 			float wz = pos.z - z1;
 			float ww = pos.w - w1;
 
-			if(repeat.x > 0) { 
-				x1 = (int)Mathf.Repeat(x1, repeat.x); 
-				x2 = (int)Mathf.Repeat(x2, repeat.x); 
-				pos.x = Mathf.Repeat(pos.x, repeat.x);
-			}
-			if(repeat.y > 0)
+			if(repeat != Vector4.zero)
 			{
-				y1 = (int)Mathf.Repeat(y1, repeat.y); 
-				y2 = (int)Mathf.Repeat(y2, repeat.y); 
-				pos.y = Mathf.Repeat(pos.y, repeat.y);
-			}
-			if(repeat.z > 0)
-			{
-				z1 = (int)Mathf.Repeat(z1, repeat.z); 
-				z2 = (int)Mathf.Repeat(z2, repeat.z); 
-				pos.z = Mathf.Repeat(pos.z, repeat.z);
-			}
-			if(repeat.w > 0)
-			{
-				w1 = (int)Mathf.Repeat(w1, repeat.w); 
-				w2 = (int)Mathf.Repeat(w2, repeat.w); 
-				pos.w = Mathf.Repeat(pos.w, repeat.w);
+				x1 = WrapCell(x1, repeat.x, settings.offset.x);
+				x2 = WrapCell(x2, repeat.x, settings.offset.x);
+				y1 = WrapCell(y1, repeat.y, settings.offset.y);
+				y2 = WrapCell(y2, repeat.y, settings.offset.y);
+				z1 = WrapCell(z1, repeat.z, settings.offset.z);
+				z2 = WrapCell(z2, repeat.z, settings.offset.z);
+				w1 = WrapCell(w1, repeat.w, settings.offset.w);
+				w2 = WrapCell(w2, repeat.w, settings.offset.w);
+				pos = Wrap(pos, repeat, settings.offset);
 			}
 
 			if(dimensions == 1)
@@ -104,6 +93,10 @@ namespace UnityNoise
 			var cell = new Vector4(cx, cy, cz, cw);
 			var vec = GetRandomDirectionVector(dimensions, cell);
 			var local = pos - cell;
+			local.x = Mathf.Repeat(local.x + 1, 2) - 1;
+			local.y = Mathf.Repeat(local.y + 1, 2) - 1;
+			local.z = Mathf.Repeat(local.z + 1, 2) - 1;
+			local.w = Mathf.Repeat(local.w + 1, 2) - 1;
 			return Vector4.Dot(local, vec);
 		}
 
