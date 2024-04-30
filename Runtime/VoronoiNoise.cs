@@ -6,10 +6,10 @@ namespace UnityNoise
 	public class VoronoiNoise : NoiseGeneratorBase<VoronoiNoise>
 	{
 
-		protected override float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings, Vector4 repeat)
+		protected override float CalcNoise(int dimensions, Vector4 pos, NoiseParameters parameters, Vector4 wrap)
 		{
-			float d = settings.voronoiSettings.voronoiDistortion * 0.8f;
-			DistanceType dt = settings.voronoiSettings.distanceType;
+			float d = parameters.voronoiParameters.voronoiDistortion * 0.8f;
+			DistanceType dt = parameters.voronoiParameters.distanceType;
 			float min = float.MaxValue;
 			Vector2 nearestCell = Vector2.zero;
 			if(dimensions == 1)
@@ -17,13 +17,13 @@ namespace UnityNoise
 				int x1 = (int)pos.x;
 				int x2 = x1 + 1;
 				int x0 = x1 - 1;
-				float c0 = GetCell(d, x0, 0, repeat, settings.offset).x;
-				float c1 = GetCell(d, x1, 0, repeat, settings.offset).x;
-				float c2 = GetCell(d, x2, 0, repeat, settings.offset).x;
+				float c0 = GetCell(d, x0, 0, wrap, parameters.offset).x;
+				float c1 = GetCell(d, x1, 0, wrap, parameters.offset).x;
+				float c2 = GetCell(d, x2, 0, wrap, parameters.offset).x;
 				float nearestCell1D = 0;
-				min = Min1D(min, ref nearestCell1D, pos.x, c0, repeat.x);
-				min = Min1D(min, ref nearestCell1D, pos.x, c1, repeat.x);
-				min = Min1D(min, ref nearestCell1D, pos.x, c2, repeat.x);
+				min = Min1D(min, ref nearestCell1D, pos.x, c0, wrap.x);
+				min = Min1D(min, ref nearestCell1D, pos.x, c1, wrap.x);
+				min = Min1D(min, ref nearestCell1D, pos.x, c2, wrap.x);
 				nearestCell = new Vector2(nearestCell1D, 0);
 			}
 			else if(dimensions == 2)
@@ -35,24 +35,24 @@ namespace UnityNoise
 				int y2 = y1 + 1;
 				int x0 = x1 - 1;
 				int y0 = y1 - 1;
-				Vector2 c00 = GetCell(d, x0, y0, repeat, settings.offset);
-				Vector2 c10 = GetCell(d, x1, y0, repeat, settings.offset);
-				Vector2 c20 = GetCell(d, x2, y0, repeat, settings.offset);
-				Vector2 c01 = GetCell(d, x0, y1, repeat, settings.offset);
-				Vector2 c11 = GetCell(d, x1, y1, repeat, settings.offset);
-				Vector2 c21 = GetCell(d, x2, y1, repeat, settings.offset);
-				Vector2 c02 = GetCell(d, x0, y2, repeat, settings.offset);
-				Vector2 c12 = GetCell(d, x1, y2, repeat, settings.offset);
-				Vector2 c22 = GetCell(d, x2, y2, repeat, settings.offset);
-				min = Min2D(min, ref nearestCell, pos2, c00, dt, repeat);
-				min = Min2D(min, ref nearestCell, pos2, c10, dt, repeat);
-				min = Min2D(min, ref nearestCell, pos2, c20, dt, repeat);
-				min = Min2D(min, ref nearestCell, pos2, c01, dt, repeat);
-				min = Min2D(min, ref nearestCell, pos2, c11, dt, repeat);
-				min = Min2D(min, ref nearestCell, pos2, c21, dt, repeat);
-				min = Min2D(min, ref nearestCell, pos2, c02, dt, repeat);
-				min = Min2D(min, ref nearestCell, pos2, c12, dt, repeat);
-				min = Min2D(min, ref nearestCell, pos2, c22, dt, repeat);
+				Vector2 c00 = GetCell(d, x0, y0, wrap, parameters.offset);
+				Vector2 c10 = GetCell(d, x1, y0, wrap, parameters.offset);
+				Vector2 c20 = GetCell(d, x2, y0, wrap, parameters.offset);
+				Vector2 c01 = GetCell(d, x0, y1, wrap, parameters.offset);
+				Vector2 c11 = GetCell(d, x1, y1, wrap, parameters.offset);
+				Vector2 c21 = GetCell(d, x2, y1, wrap, parameters.offset);
+				Vector2 c02 = GetCell(d, x0, y2, wrap, parameters.offset);
+				Vector2 c12 = GetCell(d, x1, y2, wrap, parameters.offset);
+				Vector2 c22 = GetCell(d, x2, y2, wrap, parameters.offset);
+				min = Min2D(min, ref nearestCell, pos2, c00, dt, wrap);
+				min = Min2D(min, ref nearestCell, pos2, c10, dt, wrap);
+				min = Min2D(min, ref nearestCell, pos2, c20, dt, wrap);
+				min = Min2D(min, ref nearestCell, pos2, c01, dt, wrap);
+				min = Min2D(min, ref nearestCell, pos2, c11, dt, wrap);
+				min = Min2D(min, ref nearestCell, pos2, c21, dt, wrap);
+				min = Min2D(min, ref nearestCell, pos2, c02, dt, wrap);
+				min = Min2D(min, ref nearestCell, pos2, c12, dt, wrap);
+				min = Min2D(min, ref nearestCell, pos2, c22, dt, wrap);
 			}
 			else if(dimensions == 3)
 			{
@@ -66,68 +66,68 @@ namespace UnityNoise
 				int x0 = x1 - 1;
 				int y0 = y1 - 1;
 				int z0 = z1 - 1;
-				Vector3 c000 = GetCell(d, x0, y0, z0, repeat, settings.offset);
-				Vector3 c100 = GetCell(d, x1, y0, z0, repeat, settings.offset);
-				Vector3 c200 = GetCell(d, x2, y0, z0, repeat, settings.offset);
-				Vector3 c010 = GetCell(d, x0, y1, z0, repeat, settings.offset);
-				Vector3 c110 = GetCell(d, x1, y1, z0, repeat, settings.offset);
-				Vector3 c210 = GetCell(d, x2, y1, z0, repeat, settings.offset);
-				Vector3 c020 = GetCell(d, x0, y2, z0, repeat, settings.offset);
-				Vector3 c120 = GetCell(d, x1, y2, z0, repeat, settings.offset);
-				Vector3 c220 = GetCell(d, x2, y2, z0, repeat, settings.offset);
-				Vector3 c001 = GetCell(d, x0, y0, z1, repeat, settings.offset);
-				Vector3 c101 = GetCell(d, x1, y0, z1, repeat, settings.offset);
-				Vector3 c201 = GetCell(d, x2, y0, z1, repeat, settings.offset);
-				Vector3 c011 = GetCell(d, x0, y1, z1, repeat, settings.offset);
-				Vector3 c111 = GetCell(d, x1, y1, z1, repeat, settings.offset);
-				Vector3 c211 = GetCell(d, x2, y1, z1, repeat, settings.offset);
-				Vector3 c021 = GetCell(d, x0, y2, z1, repeat, settings.offset);
-				Vector3 c121 = GetCell(d, x1, y2, z1, repeat, settings.offset);
-				Vector3 c221 = GetCell(d, x2, y2, z1, repeat, settings.offset);
-				Vector3 c002 = GetCell(d, x0, y0, z2, repeat, settings.offset);
-				Vector3 c102 = GetCell(d, x1, y0, z2, repeat, settings.offset);
-				Vector3 c202 = GetCell(d, x2, y0, z2, repeat, settings.offset);
-				Vector3 c012 = GetCell(d, x0, y1, z2, repeat, settings.offset);
-				Vector3 c112 = GetCell(d, x1, y1, z2, repeat, settings.offset);
-				Vector3 c212 = GetCell(d, x2, y1, z2, repeat, settings.offset);
-				Vector3 c022 = GetCell(d, x0, y2, z2, repeat, settings.offset);
-				Vector3 c122 = GetCell(d, x1, y2, z2, repeat, settings.offset);
-				Vector3 c222 = GetCell(d, x2, y2, z2, repeat, settings.offset);
+				Vector3 c000 = GetCell(d, x0, y0, z0, wrap, parameters.offset);
+				Vector3 c100 = GetCell(d, x1, y0, z0, wrap, parameters.offset);
+				Vector3 c200 = GetCell(d, x2, y0, z0, wrap, parameters.offset);
+				Vector3 c010 = GetCell(d, x0, y1, z0, wrap, parameters.offset);
+				Vector3 c110 = GetCell(d, x1, y1, z0, wrap, parameters.offset);
+				Vector3 c210 = GetCell(d, x2, y1, z0, wrap, parameters.offset);
+				Vector3 c020 = GetCell(d, x0, y2, z0, wrap, parameters.offset);
+				Vector3 c120 = GetCell(d, x1, y2, z0, wrap, parameters.offset);
+				Vector3 c220 = GetCell(d, x2, y2, z0, wrap, parameters.offset);
+				Vector3 c001 = GetCell(d, x0, y0, z1, wrap, parameters.offset);
+				Vector3 c101 = GetCell(d, x1, y0, z1, wrap, parameters.offset);
+				Vector3 c201 = GetCell(d, x2, y0, z1, wrap, parameters.offset);
+				Vector3 c011 = GetCell(d, x0, y1, z1, wrap, parameters.offset);
+				Vector3 c111 = GetCell(d, x1, y1, z1, wrap, parameters.offset);
+				Vector3 c211 = GetCell(d, x2, y1, z1, wrap, parameters.offset);
+				Vector3 c021 = GetCell(d, x0, y2, z1, wrap, parameters.offset);
+				Vector3 c121 = GetCell(d, x1, y2, z1, wrap, parameters.offset);
+				Vector3 c221 = GetCell(d, x2, y2, z1, wrap, parameters.offset);
+				Vector3 c002 = GetCell(d, x0, y0, z2, wrap, parameters.offset);
+				Vector3 c102 = GetCell(d, x1, y0, z2, wrap, parameters.offset);
+				Vector3 c202 = GetCell(d, x2, y0, z2, wrap, parameters.offset);
+				Vector3 c012 = GetCell(d, x0, y1, z2, wrap, parameters.offset);
+				Vector3 c112 = GetCell(d, x1, y1, z2, wrap, parameters.offset);
+				Vector3 c212 = GetCell(d, x2, y1, z2, wrap, parameters.offset);
+				Vector3 c022 = GetCell(d, x0, y2, z2, wrap, parameters.offset);
+				Vector3 c122 = GetCell(d, x1, y2, z2, wrap, parameters.offset);
+				Vector3 c222 = GetCell(d, x2, y2, z2, wrap, parameters.offset);
 				Vector3 nearestCell3D = Vector3.zero;
 				min = Vector3.Distance(pos3, c000);
-				min = Min3D(min, ref nearestCell3D, pos3, c100, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c200, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c010, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c110, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c210, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c020, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c120, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c220, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c001, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c101, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c201, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c011, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c111, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c211, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c021, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c121, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c221, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c002, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c102, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c202, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c012, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c112, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c212, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c022, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c122, dt, repeat);
-				min = Min3D(min, ref nearestCell3D, pos3, c222, dt, repeat);
+				min = Min3D(min, ref nearestCell3D, pos3, c100, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c200, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c010, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c110, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c210, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c020, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c120, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c220, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c001, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c101, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c201, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c011, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c111, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c211, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c021, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c121, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c221, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c002, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c102, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c202, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c012, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c112, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c212, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c022, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c122, dt, wrap);
+				min = Min3D(min, ref nearestCell3D, pos3, c222, dt, wrap);
 				nearestCell = nearestCell3D;
 			}
 			else
 			{
 				min = 0;
 			}
-			if(settings.voronoiSettings.voronoiType == VoronoiType.Distance)
+			if(parameters.voronoiParameters.voronoiType == VoronoiType.Distance)
 			{
 				return (dt == DistanceType.Euclidean ? Mathf.Sqrt(min) : min) * 2.25f - 1f;
 			}

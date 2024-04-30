@@ -9,7 +9,7 @@ namespace UnityNoise
 	/// </summary>
 	public class SimplexNoise : NoiseGeneratorBase<SimplexNoise>
 	{
-		protected override float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings, Vector4 repeat)
+		protected override float CalcNoise(int dimensions, Vector4 pos, NoiseParameters parameters, Vector4 wrap)
 		{
 			switch(dimensions)
 			{

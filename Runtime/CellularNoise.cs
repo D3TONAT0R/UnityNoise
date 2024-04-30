@@ -11,7 +11,7 @@ namespace UnityNoise
 			Point
 		}
 
-		protected override float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings, Vector4 repeat)
+		protected override float CalcNoise(int dimensions, Vector4 pos, NoiseParameters settings, Vector4 wrap)
 		{
 			if(dimensions == 1)
 			{
@@ -20,13 +20,13 @@ namespace UnityNoise
 				{
 					int x2 = x1 + 1;
 					float x = Weight(pos.x, x1, settings.cellFilter);
-					float c0 = GetCellValue(x1, 0, 0, 0, repeat, settings.offset);
-					float c1 = GetCellValue(x2, 0, 0, 0, repeat, settings.offset);
+					float c0 = GetCellValue(x1, 0, 0, 0, wrap, settings.offset);
+					float c1 = GetCellValue(x2, 0, 0, 0, wrap, settings.offset);
 					return Mathf.Lerp(c0, c1, x);
 				}
 				else
 				{
-					return GetCellValue(x1, 0, 0, 0, repeat, settings.offset);
+					return GetCellValue(x1, 0, 0, 0, wrap, settings.offset);
 				}
 			}
 			else if(dimensions == 2)
@@ -39,17 +39,17 @@ namespace UnityNoise
 					int y2 = y1 + 1;
 					float x = Weight(pos.x, x1, settings.cellFilter);
 					float y = Weight(pos.y, y1, settings.cellFilter);
-					float c00 = GetCellValue(x1, y1, 0, 0, repeat, settings.offset);
-					float c10 = GetCellValue(x2, y1, 0, 0, repeat, settings.offset);
-					float c01 = GetCellValue(x1, y2, 0, 0, repeat, settings.offset);
-					float c11 = GetCellValue(x2, y2, 0, 0, repeat, settings.offset);
+					float c00 = GetCellValue(x1, y1, 0, 0, wrap, settings.offset);
+					float c10 = GetCellValue(x2, y1, 0, 0, wrap, settings.offset);
+					float c01 = GetCellValue(x1, y2, 0, 0, wrap, settings.offset);
+					float c11 = GetCellValue(x2, y2, 0, 0, wrap, settings.offset);
 					float c0 = Mathf.Lerp(c00, c10, x);
 					float c1 = Mathf.Lerp(c01, c11, x);
 					return Mathf.Lerp(c0, c1, y);
 				}
 				else
 				{
-					return GetCellValue(x1, y1, 0, 0, repeat, settings.offset);
+					return GetCellValue(x1, y1, 0, 0, wrap, settings.offset);
 				}
 			}
 			else if(dimensions == 3)
@@ -65,14 +65,14 @@ namespace UnityNoise
 					float x = Weight(pos.x, x1, settings.cellFilter);
 					float y = Weight(pos.y, y1, settings.cellFilter);
 					float z = Weight(pos.z, z1, settings.cellFilter);
-					float c000 = GetCellValue(x1, y1, z1, 0, repeat, settings.offset);
-					float c100 = GetCellValue(x2, y1, z1, 0, repeat, settings.offset);
-					float c010 = GetCellValue(x1, y2, z1, 0, repeat, settings.offset);
-					float c110 = GetCellValue(x2, y2, z1, 0, repeat, settings.offset);
-					float c001 = GetCellValue(x1, y1, z2, 0, repeat, settings.offset);
-					float c101 = GetCellValue(x2, y1, z2, 0, repeat, settings.offset);
-					float c011 = GetCellValue(x1, y2, z2, 0, repeat, settings.offset);
-					float c111 = GetCellValue(x2, y2, z2, 0, repeat, settings.offset);
+					float c000 = GetCellValue(x1, y1, z1, 0, wrap, settings.offset);
+					float c100 = GetCellValue(x2, y1, z1, 0, wrap, settings.offset);
+					float c010 = GetCellValue(x1, y2, z1, 0, wrap, settings.offset);
+					float c110 = GetCellValue(x2, y2, z1, 0, wrap, settings.offset);
+					float c001 = GetCellValue(x1, y1, z2, 0, wrap, settings.offset);
+					float c101 = GetCellValue(x2, y1, z2, 0, wrap, settings.offset);
+					float c011 = GetCellValue(x1, y2, z2, 0, wrap, settings.offset);
+					float c111 = GetCellValue(x2, y2, z2, 0, wrap, settings.offset);
 					float c00 = Mathf.Lerp(c000, c100, x);
 					float c10 = Mathf.Lerp(c010, c110, x);
 					float c01 = Mathf.Lerp(c001, c101, x);
@@ -83,7 +83,7 @@ namespace UnityNoise
 				}
 				else
 				{
-					return GetCellValue(x1, y1, z1, 0, repeat, settings.offset);
+					return GetCellValue(x1, y1, z1, 0, wrap, settings.offset);
 				}
 			}
 			else if(dimensions == 4)
@@ -102,22 +102,22 @@ namespace UnityNoise
 					float y = Weight(pos.y, y1, settings.cellFilter);
 					float z = Weight(pos.z, z1, settings.cellFilter);
 					float w = Weight(pos.w, w1, settings.cellFilter);
-					float c0000 = GetCellValue(x1, y1, z1, w1, repeat, settings.offset);
-					float c1000 = GetCellValue(x2, y1, z1, w1, repeat, settings.offset);
-					float c0100 = GetCellValue(x1, y2, z1, w1, repeat, settings.offset);
-					float c1100 = GetCellValue(x2, y2, z1, w1, repeat, settings.offset);
-					float c0010 = GetCellValue(x1, y1, z2, w1, repeat, settings.offset);
-					float c1010 = GetCellValue(x2, y1, z2, w1, repeat, settings.offset);
-					float c0110 = GetCellValue(x1, y2, z2, w1, repeat, settings.offset);
-					float c1110 = GetCellValue(x2, y2, z2, w1, repeat, settings.offset);
-					float c0001 = GetCellValue(x1, y1, z1, w2, repeat, settings.offset);
-					float c1001 = GetCellValue(x2, y1, z1, w2, repeat, settings.offset);
-					float c0101 = GetCellValue(x1, y2, z1, w2, repeat, settings.offset);
-					float c1101 = GetCellValue(x2, y2, z1, w2, repeat, settings.offset);
-					float c0011 = GetCellValue(x1, y1, z2, w2, repeat, settings.offset);
-					float c1011 = GetCellValue(x2, y1, z2, w2, repeat, settings.offset);
-					float c0111 = GetCellValue(x1, y2, z2, w2, repeat, settings.offset);
-					float c1111 = GetCellValue(x2, y2, z2, w2, repeat, settings.offset);
+					float c0000 = GetCellValue(x1, y1, z1, w1, wrap, settings.offset);
+					float c1000 = GetCellValue(x2, y1, z1, w1, wrap, settings.offset);
+					float c0100 = GetCellValue(x1, y2, z1, w1, wrap, settings.offset);
+					float c1100 = GetCellValue(x2, y2, z1, w1, wrap, settings.offset);
+					float c0010 = GetCellValue(x1, y1, z2, w1, wrap, settings.offset);
+					float c1010 = GetCellValue(x2, y1, z2, w1, wrap, settings.offset);
+					float c0110 = GetCellValue(x1, y2, z2, w1, wrap, settings.offset);
+					float c1110 = GetCellValue(x2, y2, z2, w1, wrap, settings.offset);
+					float c0001 = GetCellValue(x1, y1, z1, w2, wrap, settings.offset);
+					float c1001 = GetCellValue(x2, y1, z1, w2, wrap, settings.offset);
+					float c0101 = GetCellValue(x1, y2, z1, w2, wrap, settings.offset);
+					float c1101 = GetCellValue(x2, y2, z1, w2, wrap, settings.offset);
+					float c0011 = GetCellValue(x1, y1, z2, w2, wrap, settings.offset);
+					float c1011 = GetCellValue(x2, y1, z2, w2, wrap, settings.offset);
+					float c0111 = GetCellValue(x1, y2, z2, w2, wrap, settings.offset);
+					float c1111 = GetCellValue(x2, y2, z2, w2, wrap, settings.offset);
 					float c000 = Mathf.Lerp(c0000, c1000, x);
 					float c100 = Mathf.Lerp(c0100, c1100, x);
 					float c010 = Mathf.Lerp(c0010, c1010, x);
@@ -136,7 +136,7 @@ namespace UnityNoise
 				}
 				else
 				{
-					return GetCellValue(x1, y1, z1, w1, repeat, settings.offset);
+					return GetCellValue(x1, y1, z1, w1, wrap, settings.offset);
 				}
 			}
 			else
@@ -151,13 +151,7 @@ namespace UnityNoise
 			else return pos - cell;
 		}
 
-		private static int WrapCell(int v, float repeat, float offset)
-		{
-			if(repeat > 0) v = Mathf.FloorToInt(Mathf.Repeat(v - offset, repeat) + offset);
-			return v;
-		}
-
-		private static float GetCellValue(int x, int y, int z, int w, Vector4 repeat, Vector4 offset)
+		private float GetCellValue(int x, int y, int z, int w, Vector4 repeat, Vector4 offset)
 		{
 			x = WrapCell(x, repeat.x, offset.x);
 			y = WrapCell(y, repeat.y, offset.y);

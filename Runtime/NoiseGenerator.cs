@@ -1,40 +1,42 @@
 ﻿using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 namespace UnityNoise
 {
 	public abstract class NoiseGeneratorBase
 	{
-		public float GetNoise1D(float pos, FractalSettings? settings = null)
+		public float GetNoise1D(float pos, NoiseParameters? settings = null)
 		{
-			return GetNoise(1, new Vector4(pos, 0, 0, 0), settings ?? FractalSettings.Simple);
+			return GetNoise(1, new Vector4(pos, 0, 0, 0), settings ?? NoiseParameters.Simple);
 		}
 
-		public float GetNoise2D(Vector2 pos, FractalSettings? settings = null)
+		public float GetNoise2D(Vector2 pos, NoiseParameters? settings = null)
 		{
-			return GetNoise(2, pos, settings ?? FractalSettings.Simple);
+			return GetNoise(2, pos, settings ?? NoiseParameters.Simple);
 		}
 
-		public float GetNoise3D(Vector3 pos, FractalSettings? settings = null)
+		public float GetNoise3D(Vector3 pos, NoiseParameters? settings = null)
 		{
-			return GetNoise(3, pos, settings ?? FractalSettings.Simple);
+			return GetNoise(3, pos, settings ?? NoiseParameters.Simple);
 		}
 
-		public float GetNoise4D(Vector4 pos, FractalSettings? settings = null)
+		public float GetNoise4D(Vector4 pos, NoiseParameters? settings = null)
 		{
-			return GetNoise(4, pos, settings ?? FractalSettings.Simple);
+			return GetNoise(4, pos, settings ?? NoiseParameters.Simple);
 		}
 
-		protected virtual float GetNoise(int dimensions, Vector4 pos, FractalSettings settings)
+		protected virtual float GetNoise(int dimensions, Vector4 pos, NoiseParameters parameters)
 		{
 			float noise = 0;
 			float intensity = 1f;
 
-			var scale = settings.scale;
-			var repeat = settings.repeat;
-			for(int i = 0; i < settings.octaves; i++)
+			var scale = parameters.scale;
+			var wrap = parameters.repeat;
+			var fractalParams = parameters.fractalParameters;
+			for(int i = 0; i < fractalParams.octaves; i++)
 			{
-				var offsetPos = Vector4.Scale(pos, scale) + settings.offset;
-				float value = CalcNoise(dimensions, offsetPos, settings, repeat);
+				var offsetPos = Vector4.Scale(pos, scale) + parameters.offset;
+				float value = CalcNoise(dimensions, offsetPos, parameters, wrap);
 				if(i == 0)
 				{
 					noise = value;
@@ -43,23 +45,23 @@ namespace UnityNoise
 				{
 					noise += value * intensity;
 				}
-				scale *= settings.lacunarity;
-				repeat *= settings.lacunarity;
-				intensity *= settings.persistence;
+				scale *= fractalParams.lacunarity;
+				wrap *= fractalParams.lacunarity;
+				intensity *= fractalParams.persistence;
 			}
-			noise *= settings.depth;
+			noise *= parameters.depth;
 			noise = noise * 0.5f + 0.5f;
-			if(settings.clamp) noise = Mathf.Clamp01(noise);
+			if(parameters.clampOutput) noise = Mathf.Clamp01(noise);
 			return noise;
 		}
 
-		protected abstract float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings, Vector4 repeat);
+		protected abstract float CalcNoise(int dimensions, Vector4 pos, NoiseParameters settings, Vector4 wrap);
 
-		protected int WrapCell(int pos, float repeat, float offset)
+		protected static int WrapCell(int pos, float repeat, float offset)
 		{
 			if(repeat > 0)
 			{
-				return (int)(Mathf.Repeat(pos - offset, repeat) + offset);
+				return Mathf.FloorToInt(Mathf.Repeat(pos - offset, repeat) + offset);
 			}
 			else
 			{
@@ -67,7 +69,7 @@ namespace UnityNoise
 			}
 		}
 
-		protected Vector4 Wrap(Vector4 pos, Vector4 repeat, Vector4 offset)
+		protected static Vector4 Wrap(Vector4 pos, Vector4 repeat, Vector4 offset)
 		{
 			pos -= offset;
 			if(repeat.x > 0) pos.x = Mathf.Repeat(pos.x, repeat.x);
@@ -95,6 +97,17 @@ namespace UnityNoise
 				p = (p << 13) ^ p;
 				return (1.0f - ((p * (p * p * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0f);
 			}
+		}
+
+		protected static float HashF(Vector4 pos)
+		{
+			//return random value between 0 and 1
+			return Mathf.Repeat(Mathf.Sin(Vector4.Dot(pos, new Vector4(12.9898f, 378.233f, 45.164f, 94.673f))) * 43758.5453f, 1f) * 2.0f - 1.0f;
+		}
+
+		protected static float HashF(float pos)
+		{
+			return HashF(new Vector4(pos, 0, 0, 0));
 		}
 	}
 
