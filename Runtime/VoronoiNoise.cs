@@ -121,6 +121,7 @@ namespace UnityNoise
 				min = Min3D(min, ref nearestCell3D, pos3, c022, dt, repeat);
 				min = Min3D(min, ref nearestCell3D, pos3, c122, dt, repeat);
 				min = Min3D(min, ref nearestCell3D, pos3, c222, dt, repeat);
+				nearestCell = nearestCell3D;
 			}
 			else
 			{
