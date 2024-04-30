@@ -4,15 +4,22 @@ namespace UnityNoise
 {
 	public class CellularNoise : NoiseGeneratorBase<CellularNoise>
 	{
+		public enum FilterType
+		{
+			Smooth,
+			Linear,
+			Point
+		}
+
 		protected override float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings, Vector4 repeat)
 		{
 			if(dimensions == 1)
 			{
 				int x1 = Mathf.FloorToInt(pos.x);
-				if(!settings.pointFilteredCells)
+				if(settings.cellFilter != FilterType.Point)
 				{
 					int x2 = x1 + 1;
-					float x = Mathf.SmoothStep(0, 1, pos.x - x1);
+					float x = Weight(pos.x, x1, settings.cellFilter);
 					float c0 = GetCellValue(x1, 0, 0, 0, repeat, settings.offset);
 					float c1 = GetCellValue(x2, 0, 0, 0, repeat, settings.offset);
 					return Mathf.Lerp(c0, c1, x);
@@ -26,12 +33,12 @@ namespace UnityNoise
 			{
 				int x1 = Mathf.FloorToInt(pos.x);
 				int y1 = Mathf.FloorToInt(pos.y);
-				if(!settings.pointFilteredCells)
+				if(settings.cellFilter != FilterType.Point)
 				{
 					int x2 = x1 + 1;
 					int y2 = y1 + 1;
-					float x = Mathf.SmoothStep(0, 1, pos.x - x1);
-					float y = Mathf.SmoothStep(0, 1, pos.y - y1);
+					float x = Weight(pos.x, x1, settings.cellFilter);
+					float y = Weight(pos.y, y1, settings.cellFilter);
 					float c00 = GetCellValue(x1, y1, 0, 0, repeat, settings.offset);
 					float c10 = GetCellValue(x2, y1, 0, 0, repeat, settings.offset);
 					float c01 = GetCellValue(x1, y2, 0, 0, repeat, settings.offset);
@@ -50,14 +57,14 @@ namespace UnityNoise
 				int x1 = Mathf.FloorToInt(pos.x);
 				int y1 = Mathf.FloorToInt(pos.y);
 				int z1 = Mathf.FloorToInt(pos.z);
-				if(!settings.pointFilteredCells)
+				if(settings.cellFilter != FilterType.Point)
 				{
 					int x2 = x1 + 1;
 					int y2 = y1 + 1;
 					int z2 = z1 + 1;
-					float x = Mathf.SmoothStep(0, 1, pos.x - x1);
-					float y = Mathf.SmoothStep(0, 1, pos.y - y1);
-					float z = Mathf.SmoothStep(0, 1, pos.z - z1);
+					float x = Weight(pos.x, x1, settings.cellFilter);
+					float y = Weight(pos.y, y1, settings.cellFilter);
+					float z = Weight(pos.z, z1, settings.cellFilter);
 					float c000 = GetCellValue(x1, y1, z1, 0, repeat, settings.offset);
 					float c100 = GetCellValue(x2, y1, z1, 0, repeat, settings.offset);
 					float c010 = GetCellValue(x1, y2, z1, 0, repeat, settings.offset);
@@ -85,16 +92,16 @@ namespace UnityNoise
 				int y1 = Mathf.FloorToInt(pos.y);
 				int z1 = Mathf.FloorToInt(pos.z);
 				int w1 = Mathf.FloorToInt(pos.w);
-				if(!settings.pointFilteredCells)
+				if(settings.cellFilter != FilterType.Point)
 				{
 					int x2 = x1 + 1;
 					int y2 = y1 + 1;
 					int z2 = z1 + 1;
 					int w2 = w1 + 1;
-					float x = Mathf.SmoothStep(0, 1, pos.x - x1);
-					float y = Mathf.SmoothStep(0, 1, pos.y - y1);
-					float z = Mathf.SmoothStep(0, 1, pos.z - z1);
-					float w = Mathf.SmoothStep(0, 1, pos.w - w1);
+					float x = Weight(pos.x, x1, settings.cellFilter);
+					float y = Weight(pos.y, y1, settings.cellFilter);
+					float z = Weight(pos.z, z1, settings.cellFilter);
+					float w = Weight(pos.w, w1, settings.cellFilter);
 					float c0000 = GetCellValue(x1, y1, z1, w1, repeat, settings.offset);
 					float c1000 = GetCellValue(x2, y1, z1, w1, repeat, settings.offset);
 					float c0100 = GetCellValue(x1, y2, z1, w1, repeat, settings.offset);
@@ -136,6 +143,12 @@ namespace UnityNoise
 			{
 				return 0;
 			}
+		}
+
+		private float Weight(float pos, int cell, FilterType filter)
+		{
+			if(filter == FilterType.Smooth) return Mathf.SmoothStep(0, 1, pos - cell);
+			else return pos - cell;
 		}
 
 		private static int WrapCell(int v, float repeat, float offset)

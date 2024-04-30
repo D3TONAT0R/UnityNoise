@@ -34,6 +34,7 @@ namespace UnityNoiseEditor
 		public Vector2Int resolution = new Vector2Int(128, 128);
 
 		public NoiseType noiseType = NoiseType.Perlin;
+		public bool use3DNoise = false;
 		[Range(1, 8)]
 		public int octaves = 1;
 		[Min(1.1f)]
@@ -45,7 +46,7 @@ namespace UnityNoiseEditor
 		public float depth = 1f;
 		public VoronoiSettings voronoiSettings = VoronoiSettings.Default;
 		public bool tiled = false;
-		public bool pointFilteredCells = false;
+		public CellularNoise.FilterType cellFilter = CellularNoise.FilterType.Smooth;
 
 		public int seed = 0;
 
@@ -72,10 +73,11 @@ namespace UnityNoiseEditor
 
 			Random.InitState(seed);
 			var offset = new Vector2(Random.Range(short.MinValue, short.MaxValue), Random.Range(short.MinValue, short.MaxValue));
+			var z = Random.Range((float)short.MinValue, (float)short.MaxValue);
 			Vector2 actualScale = scale;
 			actualScale.x *= resolution.x / (float)resolution.y;
 			Vector2 repeat = tiled ? new Vector2(actualScale.x, actualScale.y) : Vector2.zero;
-			var settings = new FractalSettings(octaves, lacunarity, persistence, actualScale, offset, depth, voronoiSettings, false, repeat, pointFilteredCells);
+			var settings = new FractalSettings(octaves, lacunarity, persistence, actualScale, offset, depth, voronoiSettings, false, repeat, cellFilter);
 			int width = resolution.x;
 			float fwidth = resolution.x;
 			float fheight = resolution.y;
@@ -85,7 +87,7 @@ namespace UnityNoiseEditor
 			{
 				for(int x = 0; x < resolution.x; x++)
 				{
-					var n = GetNoise(new Vector2(x / fwidth, y / fheight), settings);
+					var n = GetNoise(new Vector3(x / fwidth, y / fheight, z), settings, use3DNoise);
 					values[y * width + x] = n;
 				}
 			});
@@ -133,19 +135,29 @@ namespace UnityNoiseEditor
 			ctx.AddObjectToAsset("texture", texture);
 		}
 
-		private float GetNoise(Vector2 pos, FractalSettings settings)
+		private float GetNoise(Vector3 pos, FractalSettings settings, bool threeDimensional)
 		{
-			switch(noiseType)
+			if(!threeDimensional)
 			{
-				case NoiseType.Perlin:
-					return PerlinNoise.Instance.GetNoise2D(pos, settings);
-				case NoiseType.Simplex:
-					return SimplexNoise.Instance.GetNoise2D(pos, settings);
-				case NoiseType.Cellular:
-					return CellularNoise.Instance.GetNoise2D(pos, settings);
-				case NoiseType.Voronoi:
-					return VoronoiNoise.Instance.GetNoise2D(pos, settings);
-				default: return 0;
+				switch(noiseType)
+				{
+					case NoiseType.Perlin: return PerlinNoise.Instance.GetNoise2D(pos, settings);
+					case NoiseType.Simplex: return SimplexNoise.Instance.GetNoise2D(pos, settings);
+					case NoiseType.Cellular: return CellularNoise.Instance.GetNoise2D(pos, settings);
+					case NoiseType.Voronoi: return VoronoiNoise.Instance.GetNoise2D(pos, settings);
+					default: return 0;
+				}
+			}
+			else
+			{
+				switch(noiseType)
+				{
+					case NoiseType.Perlin: return PerlinNoise.Instance.GetNoise3D(pos, settings);
+					case NoiseType.Simplex: return SimplexNoise.Instance.GetNoise3D(pos, settings);
+					case NoiseType.Cellular: return CellularNoise.Instance.GetNoise3D(pos, settings);
+					case NoiseType.Voronoi: return VoronoiNoise.Instance.GetNoise3D(pos, settings);
+					default: return 0;
+				}
 			}
 		}
 

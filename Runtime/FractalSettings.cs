@@ -50,11 +50,11 @@ namespace UnityNoise
 		public float depth;
 		public VoronoiSettings voronoiSettings;
 		public Vector4 repeat;
-		public bool pointFilteredCells;
+		public CellularNoise.FilterType cellFilter;
 
 		public bool clamp;
 
-		public FractalSettings(int octaves, float lacunarity, float persistence, Vector4 scale, Vector4 offset = default, float depth = 1f, VoronoiSettings? voronoiSettings = null, bool clamp = false, Vector4 repeat = default, bool pointFilteredCells = false)
+		public FractalSettings(int octaves, float lacunarity, float persistence, Vector4 scale, Vector4 offset = default, float depth = 1f, VoronoiSettings? voronoiSettings = null, bool clamp = false, Vector4 repeat = default, CellularNoise.FilterType cellFilter = default)
 		{
 			this.octaves = octaves;
 			this.lacunarity = lacunarity;
@@ -65,11 +65,11 @@ namespace UnityNoise
 			this.voronoiSettings = voronoiSettings ?? VoronoiSettings.Default;
 			this.clamp = clamp;
 			this.repeat = repeat;
-			this.pointFilteredCells = pointFilteredCells;
+			this.cellFilter = cellFilter;
 		}
 
-		public FractalSettings(int octaves, float lacunarity, float persistence, float scale, Vector4 offset = default, float depth = 1f, VoronoiSettings? voronoiSettings = null, bool clamp = false, Vector4 repeat = default, bool pointFilteredCells = false)
-		: this(octaves, lacunarity, persistence, new Vector4(scale, scale, scale, scale), offset, depth, voronoiSettings, clamp, repeat, pointFilteredCells)
+		public FractalSettings(int octaves, float lacunarity, float persistence, float scale, Vector4 offset = default, float depth = 1f, VoronoiSettings? voronoiSettings = null, bool clamp = false, Vector4 repeat = default, CellularNoise.FilterType cellFilter = default)
+		: this(octaves, lacunarity, persistence, new Vector4(scale, scale, scale, scale), offset, depth, voronoiSettings, clamp, repeat, cellFilter)
 		{
 
 		}

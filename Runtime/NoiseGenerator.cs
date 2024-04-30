@@ -55,11 +55,16 @@ namespace UnityNoise
 
 		protected abstract float CalcNoise(int dimensions, Vector4 pos, FractalSettings settings, Vector4 repeat);
 
-		protected int WrapCell(float pos, float repeat, float offset)
+		protected int WrapCell(int pos, float repeat, float offset)
 		{
-			pos -= offset;
-			pos = Mathf.Repeat(pos, repeat);
-			return (int)(pos + offset);
+			if(repeat > 0)
+			{
+				return (int)(Mathf.Repeat(pos - offset, repeat) + offset);
+			}
+			else
+			{
+				return pos;
+			}
 		}
 
 		protected Vector4 Wrap(Vector4 pos, Vector4 repeat, Vector4 offset)

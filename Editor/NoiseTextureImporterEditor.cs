@@ -12,6 +12,7 @@ namespace UnityNoiseEditor
 		{
 			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.resolution)));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.noiseType)));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.use3DNoise)));
 
 			var noiseType = (NoiseTextureImporter.NoiseType)serializedObject.FindProperty(nameof(NoiseTextureImporter.noiseType)).intValue;
 			if(noiseType == NoiseTextureImporter.NoiseType.Voronoi)
@@ -20,7 +21,7 @@ namespace UnityNoiseEditor
 			}
 			else if(noiseType == NoiseTextureImporter.NoiseType.Cellular)
 			{
-				EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.pointFilteredCells)));
+				EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.cellFilter)));
 			}
 
 			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(NoiseTextureImporter.scale)));
