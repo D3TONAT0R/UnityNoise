@@ -107,7 +107,7 @@ namespace UnityNoise
 
 		protected static float HashF(float pos)
 		{
-			return HashF(new Vector4(pos, 0, 0, 0));
+			return HashF(new Vector4(pos, pos, pos, pos));
 		}
 	}
 

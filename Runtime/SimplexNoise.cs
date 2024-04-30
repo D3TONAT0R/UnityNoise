@@ -77,8 +77,8 @@ namespace UnityNoise
 			float y2 = y0 - 1.0f + 2.0f * G2;
 
 			// Wrap the integer indices at 256, to avoid indexing perm[] out of bounds
-			int ii = i % 256;
-			int jj = j % 256;
+			int ii = Mod(i, 256);
+			int jj = Mod(j, 256);
 
 			// Calculate the contribution from the three corners
 			float t0 = 0.5f - x0 * x0 - y0 * y0;
@@ -108,6 +108,11 @@ namespace UnityNoise
 			// Add contributions from each corner to get the final noise value.
 			// The result is scaled to return values in the interval [-1,1].
 			return 40.0f * (n0 + n1 + n2); // TODO: The scale factor is preliminary!
+		}
+
+		private static float Mod(float v, float mod)
+		{
+			return ((v % mod) + mod) % mod;
 		}
 
 

@@ -113,8 +113,9 @@ namespace UnityNoise
 			}
 			else if(dimensions == 2)
 			{
-				float h = HashF(i.x + 1738.3973f * i.y);
-				return new Vector2(Mathf.Sin(h), Mathf.Cos(h));
+				float h1 = (float)(2920f * Mathf.Sin(i.x * 21942f + i.y * 171324f + 8912f) * Mathf.Cos(i.x * 23157f * i.y * 217832f + 9758f));
+				//float h1 = HashF(i.x + i.y * 31.2f);
+				return new Vector2(Mathf.Sin(h1), Mathf.Cos(h1));
 			}
 			else if(dimensions == 3)
 			{
