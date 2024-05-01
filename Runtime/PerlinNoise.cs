@@ -68,7 +68,7 @@ namespace UnityNoise
 				float ix121 = PowLerp(DotGrid(dimensions, pos, x1, y1, z2, w1), DotGrid(dimensions, pos, x2, y1, z2, w1), wx);
 				float ix221 = PowLerp(DotGrid(dimensions, pos, x1, y2, z2, w1), DotGrid(dimensions, pos, x2, y2, z2, w1), wx);
 				float ix112 = PowLerp(DotGrid(dimensions, pos, x1, y1, z1, w2), DotGrid(dimensions, pos, x2, y1, z1, w2), wx);
-				float ix212 = PowLerp(DotGrid(dimensions, pos, x2, y2, z1, w2), DotGrid(dimensions, pos, x2, y2, z1, w2), wx);
+				float ix212 = PowLerp(DotGrid(dimensions, pos, x1, y2, z1, w2), DotGrid(dimensions, pos, x2, y2, z1, w2), wx);
 				float ix122 = PowLerp(DotGrid(dimensions, pos, x1, y1, z2, w2), DotGrid(dimensions, pos, x2, y1, z2, w2), wx);
 				float ix222 = PowLerp(DotGrid(dimensions, pos, x1, y2, z2, w2), DotGrid(dimensions, pos, x2, y2, z2, w2), wx);
 				//Interpolate on the y axis
