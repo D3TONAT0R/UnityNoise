@@ -110,12 +110,6 @@ namespace UnityNoise
 			return 40.0f * (n0 + n1 + n2); // TODO: The scale factor is preliminary!
 		}
 
-		private static float Mod(float v, float mod)
-		{
-			return ((v % mod) + mod) % mod;
-		}
-
-
 		private static float CalcNoise3D(Vector3 pos)
 		{
 			// Simple skewing factors for the 3D case
