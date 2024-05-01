@@ -69,14 +69,20 @@ namespace UnityNoise
 			}
 		}
 
+		protected static float Wrap(float pos, float repeat, float offset)
+		{
+			if(repeat > 0) return Mathf.Repeat(pos - offset, repeat) + offset;
+			else return pos;
+		}
+
 		protected static Vector4 Wrap(Vector4 pos, Vector4 repeat, Vector4 offset)
 		{
 			pos -= offset;
-			if(repeat.x > 0) pos.x = Mathf.Repeat(pos.x, repeat.x);
-			if(repeat.y > 0) pos.y = Mathf.Repeat(pos.y, repeat.y);
-			if(repeat.z > 0) pos.z = Mathf.Repeat(pos.z, repeat.z);
-			if(repeat.w > 0) pos.w = Mathf.Repeat(pos.w, repeat.w);
-			return pos + offset;
+			pos.x = Wrap(pos.x, repeat.x, offset.x);
+			pos.y = Wrap(pos.y, repeat.y, offset.y);
+			pos.z = Wrap(pos.z, repeat.z, offset.z);
+			pos.w = Wrap(pos.w, repeat.w, offset.w);
+			return pos;
 		}
 
 		protected static float Hash(int x, int y, int z, int w)
