@@ -9,6 +9,8 @@ namespace UnityNoise
 	/// </summary>
 	public class SimplexNoise : NoiseGeneratorBase<SimplexNoise>
 	{
+		public override bool SupportsTiling => false;
+
 		protected override float CalcNoise(int dimensions, Vector4 pos, NoiseParameters parameters, Vector4 wrap)
 		{
 			switch(dimensions)

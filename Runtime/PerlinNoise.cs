@@ -4,6 +4,8 @@ namespace UnityNoise
 {
 	public class PerlinNoise : NoiseGeneratorBase<PerlinNoise>
 	{
+		public override bool SupportsTiling => true;
+
 		protected override float CalcNoise(int dimensions, Vector4 pos, NoiseParameters parameters, Vector4 wrap)
 		{
 			int x1 = Mathf.FloorToInt(pos.x);

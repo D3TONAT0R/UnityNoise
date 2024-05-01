@@ -5,6 +5,7 @@ namespace UnityNoise
 {
 	public class VoronoiNoise : NoiseGeneratorBase<VoronoiNoise>
 	{
+		public override bool SupportsTiling => true;
 
 		protected override float CalcNoise(int dimensions, Vector4 pos, NoiseParameters parameters, Vector4 wrap)
 		{

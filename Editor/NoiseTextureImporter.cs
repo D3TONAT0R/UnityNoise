@@ -85,14 +85,61 @@ namespace UnityNoiseEditor
 			float fheight = resolution.y;
 
 			float[] values = new float[resolution.x * resolution.y];
-			Parallel.For(0, resolution.y, y =>
+			var generator = GetNoiseGenerator(noiseType);
+
+			//Revert to edge blending if the current generator doesn't support tiling
+			bool edgeBlend = tiled && !generator.SupportsTiling;
+			if(edgeBlend)
 			{
-				for(int x = 0; x < resolution.x; x++)
+				parameters.repeat = Vector4.zero;
+				Parallel.For(0, resolution.y, y =>
 				{
-					var n = GetNoise(new Vector3(x / fwidth, y / fheight, z), parameters, use3DNoise);
-					values[y * width + x] = n;
-				}
-			});
+					for(int x = 0; x < resolution.x; x++)
+					{
+						//Start blending towards the top & right edges, starting from the middle
+						Vector2 blend = new Vector2((x / fwidth) * 2f - 1f, (y / fheight) * 2f - 1f);
+						blend.x = Mathf.SmoothStep(0, 1, blend.x);
+						blend.y = Mathf.SmoothStep(0, 1, blend.y);
+						var n = GetNoise(generator, new Vector3(x / fwidth, y / fheight, z), parameters, use3DNoise);
+
+						Vector3 nb = Vector3.zero;
+						if(blend.x > 0)
+						{
+							nb.x = GetNoise(generator, new Vector3(x / fwidth - 1f, y / fheight, z), parameters, use3DNoise);
+						}
+						if(blend.y > 0)
+						{
+							nb.y = GetNoise(generator, new Vector3(x / fwidth, y / fheight - 1f, z), parameters, use3DNoise);
+						}
+						if(blend.x > 0 && blend.y > 0)
+						{
+							nb.z = GetNoise(generator, new Vector3(x / fwidth - 1f, y / fheight - 1f, z), parameters, use3DNoise);
+						}
+
+						if(blend.sqrMagnitude > 0)
+						{
+							//TODO: doesn't work, needs a better blending function
+							n = Mathf.Lerp(n, nb.y, blend.y);
+							n = Mathf.Lerp(n, nb.x, blend.x);
+							n = Mathf.Lerp(n, nb.z, blend.x * blend.y);
+						}
+						values[y * width + x] = n;
+					}
+				});
+			}
+			else
+			{
+				Parallel.For(0, resolution.y, y =>
+				{
+					for(int x = 0; x < resolution.x; x++)
+					{
+						var n = GetNoise(generator, new Vector3(x / fwidth, y / fheight, z), parameters, use3DNoise);
+						values[y * width + x] = n;
+					}
+				});
+			}
+
+			
 
 			Color[] colors = new Color[resolution.x * resolution.y];
 			int[] histogramBands = new int[HISTOGRAM_BANDS];
@@ -137,30 +184,22 @@ namespace UnityNoiseEditor
 			ctx.AddObjectToAsset("texture", texture);
 		}
 
-		private float GetNoise(Vector3 pos, NoiseParameters parameters, bool threeDimensional)
+		private NoiseGeneratorBase GetNoiseGenerator(NoiseType type)
 		{
-			if(!threeDimensional)
+			switch(type)
 			{
-				switch(noiseType)
-				{
-					case NoiseType.Perlin: return PerlinNoise.Instance.GetNoise2D(pos, parameters);
-					case NoiseType.Simplex: return SimplexNoise.Instance.GetNoise2D(pos, parameters);
-					case NoiseType.Cellular: return CellularNoise.Instance.GetNoise2D(pos, parameters);
-					case NoiseType.Voronoi: return VoronoiNoise.Instance.GetNoise2D(pos, parameters);
-					default: return 0;
-				}
+				case NoiseType.Perlin: return PerlinNoise.Instance;
+				case NoiseType.Simplex: return SimplexNoise.Instance;
+				case NoiseType.Cellular: return CellularNoise.Instance;
+				case NoiseType.Voronoi: return VoronoiNoise.Instance;
+				default: throw new System.NotImplementedException();
 			}
-			else
-			{
-				switch(noiseType)
-				{
-					case NoiseType.Perlin: return PerlinNoise.Instance.GetNoise3D(pos, parameters);
-					case NoiseType.Simplex: return SimplexNoise.Instance.GetNoise3D(pos, parameters);
-					case NoiseType.Cellular: return CellularNoise.Instance.GetNoise3D(pos, parameters);
-					case NoiseType.Voronoi: return VoronoiNoise.Instance.GetNoise3D(pos, parameters);
-					default: return 0;
-				}
-			}
+		}
+
+		private float GetNoise(NoiseGeneratorBase generator, Vector3 pos, NoiseParameters parameters, bool threeDimensional)
+		{
+			if(!threeDimensional) return generator.GetNoise2D(pos, parameters);
+			else return generator.GetNoise3D(pos, parameters);
 		}
 
 		[MenuItem("Assets/Create/Texture2D/Perlin Noise Texture")]

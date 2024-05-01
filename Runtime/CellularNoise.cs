@@ -11,6 +11,8 @@ namespace UnityNoise
 			Point
 		}
 
+		public override bool SupportsTiling => true;
+
 		protected override float CalcNoise(int dimensions, Vector4 pos, NoiseParameters settings, Vector4 wrap)
 		{
 			if(dimensions == 1)

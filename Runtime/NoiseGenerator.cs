@@ -5,6 +5,8 @@ namespace UnityNoise
 {
 	public abstract class NoiseGeneratorBase
 	{
+		public abstract bool SupportsTiling { get; }
+
 		public float GetNoise1D(float pos, NoiseParameters? settings = null)
 		{
 			return GetNoise(1, new Vector4(pos, 0, 0, 0), settings ?? NoiseParameters.Simple);
