@@ -2,6 +2,8 @@ using UnityNoise;
 using UnityEngine;
 using UnityEditor;
 using System.Threading.Tasks;
+using System.Drawing.Drawing2D;
+
 #if UNITY_2020_2_OR_NEWER
 using UnityEditor.AssetImporters;
 #else
@@ -97,31 +99,43 @@ namespace UnityNoiseEditor
 					for(int x = 0; x < resolution.x; x++)
 					{
 						//Start blending towards the top & right edges, starting from the middle
-						Vector2 blend = new Vector2((x / fwidth) * 2f - 1f, (y / fheight) * 2f - 1f);
-						blend.x = Mathf.SmoothStep(0, 1, blend.x);
-						blend.y = Mathf.SmoothStep(0, 1, blend.y);
+						Vector3 blend = new Vector2((x / fwidth) * 2f - 1f, (y / fheight) * 2f - 1f);
+						blend.x = Mathf.SmoothStep(0, 1, Mathf.Clamp01(blend.x));
+						blend.y = Mathf.SmoothStep(0, 1, Mathf.Clamp01(blend.y));
 						var n = GetNoise(generator, new Vector3(x / fwidth, y / fheight, z), parameters, use3DNoise);
 
 						Vector3 nb = Vector3.zero;
+
+						if(blend.x > 0 && blend.y > 0)
+						{
+							//corner
+							nb.z = GetNoise(generator, new Vector3(x / fwidth - 1f, y / fheight - 1, z), parameters, use3DNoise);
+						}
 						if(blend.x > 0)
 						{
+							//right edge
 							nb.x = GetNoise(generator, new Vector3(x / fwidth - 1f, y / fheight, z), parameters, use3DNoise);
 						}
 						if(blend.y > 0)
 						{
+							//top edge
 							nb.y = GetNoise(generator, new Vector3(x / fwidth, y / fheight - 1f, z), parameters, use3DNoise);
-						}
-						if(blend.x > 0 && blend.y > 0)
-						{
-							nb.z = GetNoise(generator, new Vector3(x / fwidth - 1f, y / fheight - 1f, z), parameters, use3DNoise);
 						}
 
 						if(blend.sqrMagnitude > 0)
 						{
-							//TODO: doesn't work, needs a better blending function
-							n = Mathf.Lerp(n, nb.y, blend.y);
 							n = Mathf.Lerp(n, nb.x, blend.x);
-							n = Mathf.Lerp(n, nb.z, blend.x * blend.y);
+							n = Mathf.Lerp(n, nb.y, blend.y);
+
+							//float t = blend.normalized.x;
+							//float xy = Mathf.Lerp(nb.x, nb.y, t * t);
+							if(blend.x > 0 && blend.y > 0)
+							{
+								float tb = Mathf.Clamp01(1f - Vector2.Distance(blend, Vector2.one) * 2f);// Mathf.Clamp01(1f - (blend.x + blend.y));
+								n = Mathf.Lerp(n, nb.z, tb);
+							}
+
+							//n = Mathf.Lerp(n, n1, Mathf.Clamp01(blend.magnitude));
 						}
 						values[y * width + x] = n;
 					}
@@ -139,7 +153,7 @@ namespace UnityNoiseEditor
 				});
 			}
 
-			
+
 
 			Color[] colors = new Color[resolution.x * resolution.y];
 			int[] histogramBands = new int[HISTOGRAM_BANDS];
