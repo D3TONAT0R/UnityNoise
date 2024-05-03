@@ -124,18 +124,17 @@ namespace UnityNoiseEditor
 
 						if(blend.sqrMagnitude > 0)
 						{
+							var v2 = new Vector2(Mathf.Clamp01(blend.x), Mathf.Clamp01(blend.y));
+							//TODO: not perfect, creates a seam on the top right corner
 							n = Mathf.Lerp(n, nb.x, blend.x);
-							n = Mathf.Lerp(n, nb.y, blend.y);
+							float bx = blend.x;
+							n = Mathf.Lerp(n, nb.y, blend.y - bx * bx * bx * bx * bx * bx * bx * bx);
 
-							//float t = blend.normalized.x;
-							//float xy = Mathf.Lerp(nb.x, nb.y, t * t);
 							if(blend.x > 0 && blend.y > 0)
 							{
-								float tb = Mathf.Clamp01(1f - Vector2.Distance(blend, Vector2.one) * 2f);// Mathf.Clamp01(1f - (blend.x + blend.y));
+								float tb = blend.x * blend.y;
 								n = Mathf.Lerp(n, nb.z, tb);
 							}
-
-							//n = Mathf.Lerp(n, n1, Mathf.Clamp01(blend.magnitude));
 						}
 						values[y * width + x] = n;
 					}
