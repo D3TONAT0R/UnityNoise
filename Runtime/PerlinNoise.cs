@@ -33,7 +33,6 @@ namespace UnityNoise
 				z2 = WrapCell(z2, wrap.z, parameters.offset.z);
 				w1 = WrapCell(w1, wrap.w, parameters.offset.w);
 				w2 = WrapCell(w2, wrap.w, parameters.offset.w);
-				pos = Wrap(pos, wrap, parameters.offset);
 			}
 
 			if(dimensions == 1)
