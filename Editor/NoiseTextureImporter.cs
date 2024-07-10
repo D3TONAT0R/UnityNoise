@@ -2,7 +2,6 @@ using UnityNoise;
 using UnityEngine;
 using UnityEditor;
 using System.Threading.Tasks;
-using System.Drawing.Drawing2D;
 
 #if UNITY_2020_2_OR_NEWER
 using UnityEditor.AssetImporters;
