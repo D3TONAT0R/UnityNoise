@@ -147,7 +147,7 @@ float ComputePerlinNoise1D(float pos, FractalSettings settings)
 {
 	float v = 0.0;
 	float intensity = 1.0;
-	for (int i = 0; i < settings.octaves; i++)
+	FOR_FRACTAL
 	{
 		v += GetPerlinNoise1D(pos) * intensity;
 		pos *= settings.lacunarity;
@@ -160,7 +160,7 @@ float ComputePerlinNoise2D(float2 pos, FractalSettings settings)
 {
 	float v = 0.0;
 	float intensity = 1.0;
-	for (int i = 0; i < settings.octaves; i++)
+	FOR_FRACTAL
 	{
 		v += GetPerlinNoise2D(pos) * intensity;
 		pos *= settings.lacunarity;
@@ -173,7 +173,7 @@ float ComputePerlinNoise3D(float3 pos, FractalSettings settings)
 {
 	float v = 0.0;
 	float intensity = 1.0;
-	for (int i = 0; i < settings.octaves; i++)
+	FOR_FRACTAL
 	{
 		v += GetPerlinNoise3D(pos) * intensity;
 		pos *= settings.lacunarity;
@@ -186,7 +186,7 @@ float ComputePerlinNoise4D(float4 pos, FractalSettings settings)
 {
 	float v = 0.0;
 	float intensity = 1.0;
-	for (int i = 0; i < settings.octaves; i++)
+	FOR_FRACTAL
 	{
 		v += GetPerlinNoise4D(pos) * intensity;
 		pos *= settings.lacunarity;

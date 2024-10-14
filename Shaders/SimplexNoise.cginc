@@ -331,7 +331,7 @@ float ComputeSimplexNoise1D(float pos, FractalSettings settings)
 {
     float v = 0.0;
     float intensity = 1.0;
-    for (int i = 0; i < settings.octaves; i++)
+    FOR_FRACTAL
     {
         v += GetSimplexNoise1D(pos) * intensity;
         pos *= settings.lacunarity;
@@ -344,7 +344,7 @@ float ComputeSimplexNoise2D(float2 pos, FractalSettings settings)
 {
     float v = 0.0;
     float intensity = 1.0;
-    for (int i = 0; i < settings.octaves; i++)
+    FOR_FRACTAL
     {
         v += GetSimplexNoise2D(pos) * intensity;
         pos *= settings.lacunarity;
@@ -357,7 +357,7 @@ float ComputeSimplexNoise3D(float3 pos, FractalSettings settings)
 {
     float v = 0.0;
     float intensity = 1.0;
-    for (int i = 0; i < settings.octaves; i++)
+    FOR_FRACTAL
     {
         v += GetSimplexNoise3D(pos) * intensity;
         pos *= settings.lacunarity;

@@ -1,3 +1,5 @@
+#define FOR_FRACTAL for(int i = 0; i < min(settings.octaves, 8); i++)
+
 struct FractalSettings
 {
     int octaves;

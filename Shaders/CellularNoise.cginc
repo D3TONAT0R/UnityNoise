@@ -84,7 +84,7 @@ float ComputeCellularNoise1D(float pos, FractalSettings settings)
 {
     float v = 0.0;
     float intensity = 1.0;
-    for (int i = 0; i < settings.octaves; i++)
+    FOR_FRACTAL
     {
         v += GetCellularNoise1D(pos, settings.smoothing) * intensity;
         pos *= settings.lacunarity;
@@ -97,7 +97,7 @@ float ComputeCellularNoise2D(float2 pos, FractalSettings settings)
 {
     float v = 0.0;
     float intensity = 1.0;
-    for (int i = 0; i < settings.octaves; i++)
+    FOR_FRACTAL
     {
         v += GetCellularNoise2D(pos, settings.smoothing) * intensity;
         pos *= settings.lacunarity;
@@ -110,7 +110,7 @@ float ComputeCellularNoise3D(float3 pos, FractalSettings settings)
 {
     float v = 0.0;
     float intensity = 1.0;
-    for (int i = 0; i < settings.octaves; i++)
+    FOR_FRACTAL
     {
         v += GetCellularNoise3D(pos, settings.smoothing) * intensity;
         pos *= settings.lacunarity;
@@ -123,7 +123,7 @@ float ComputeCellularNoise4D(float4 pos, FractalSettings settings)
 {
     float v = 0.0;
     float intensity = 1.0;
-    for (int i = 0; i < settings.octaves; i++)
+    FOR_FRACTAL
     {
         v += GetCellularNoise4D(pos, settings.smoothing) * intensity;
         pos *= settings.lacunarity;

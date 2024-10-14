@@ -393,7 +393,7 @@ float2 ComputeVoronoiNoise1D(float pos, FractalSettings settings)
 {
 	float2 v = 0.0;
 	float intensity = 1.0;
-	for (int i = 0; i < settings.octaves; i++)
+    FOR_FRACTAL
 	{
 		v += GetVoronoiNoise1D(pos, 1) * intensity;
 		pos *= settings.lacunarity;
@@ -406,7 +406,7 @@ float2 ComputeVoronoiNoise2D(float2 pos, FractalSettings settings)
 {
 	float2 v = 0.0;
 	float intensity = 1.0;
-	for (int i = 0; i < settings.octaves; i++)
+	FOR_FRACTAL
 	{
 		v += GetVoronoiNoise2D(pos, 1) * intensity;
 		pos *= settings.lacunarity;
@@ -419,7 +419,7 @@ float2 ComputeVoronoiNoise3D(float3 pos, FractalSettings settings)
 {
 	float2 v = 0.0;
 	float intensity = 1.0;
-	for (int i = 0; i < settings.octaves; i++)
+    FOR_FRACTAL
 	{
 		v += GetVoronoiNoise3D(pos, 1) * intensity;
 		pos *= settings.lacunarity;
@@ -432,7 +432,7 @@ float2 ComputeVoronoiNoise4D(float4 pos, FractalSettings settings)
 {
 	float2 v = 0.0;
 	float intensity = 1.0;
-	for (int i = 0; i < settings.octaves; i++)
+    FOR_FRACTAL
 	{
 		v += GetVoronoiNoise4D(pos, 1) * intensity;
 		pos *= settings.lacunarity;
