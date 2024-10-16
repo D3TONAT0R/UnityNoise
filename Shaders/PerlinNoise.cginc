@@ -54,8 +54,8 @@ float GetPerlinNoise1D(float x)
     int x1 = floor(x);
     int x2 = x1 + 1;
     float wx = x - x1;
-    float g0 = DotGrid(float2(x, 0), x1);
-    float g1 = DotGrid(float2(x, 0), x2);
+    float g0 = DotGrid(float2(x, x), x1);
+    float g1 = DotGrid(float2(x, x), x2);
     return PowLerp(g0, g1, wx) * 2.0;
 
 }

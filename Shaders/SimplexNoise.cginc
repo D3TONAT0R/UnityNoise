@@ -36,16 +36,16 @@ int mod(int x, int m)
     return a < 0 ? a + m : a;
 }
 
-float Gradient(int hash, float x)
+float SimplexGrad(int hash, float x)
 {
     int h = hash & 15;
-    float grad = 1.0 + (h & 7); // Gradient value 1.0, 2.0, ..., 8.0
+    float grad = 1.0 + (h & 7); // SimplexGrad value 1.0, 2.0, ..., 8.0
     if ((h & 8) != 0)
         grad = -grad; // Set a random sign for the gradient
     return (grad * x); // Multiply the gradient with the distance
 }
 
-float Gradient(int hash, float x, float y)
+float SimplexGrad(int hash, float x, float y)
 {
     int h = hash & 7; // Convert low 3 bits of hash code
     float u = h < 4 ? x : y; // into 8 simple gradient directions,
@@ -53,7 +53,7 @@ float Gradient(int hash, float x, float y)
     return ((h & 1) != 0 ? -u : u) + ((h & 2) != 0 ? -2.0 * v : 2.0 * v);
 }
 
-float Gradient(int hash, float x, float y, float z)
+float SimplexGrad(int hash, float x, float y, float z)
 {
     int h = hash & 15; // Convert low 4 bits of hash code into 12 simple
     float u = h < 8 ? x : y; // gradient directions, and compute dot product.
@@ -61,7 +61,7 @@ float Gradient(int hash, float x, float y, float z)
     return ((h & 1) != 0 ? -u : u) + ((h & 2) != 0 ? -v : v);
 }
 
-float Gradient(int hash, float x, float y, float z, float t)
+float SimplexGrad(int hash, float x, float y, float z, float t)
 {
     int h = hash & 31; // Convert low 5 bits of hash code into 32 simple
     float u = h < 24 ? x : y; // gradient directions, and compute dot product.
@@ -81,11 +81,11 @@ float GetSimplexNoise1D(float x)
 
     float t0 = 1.0 - x0 * x0;
     t0 *= t0;
-    n0 = t0 * t0 * Gradient(perm[i0 & 0xff], x0);
+    n0 = t0 * t0 * SimplexGrad(perm[i0 & 0xff], x0);
 
     float t1 = 1.0 - x1 * x1;
     t1 *= t1;
-    n1 = t1 * t1 * Gradient(perm[i1 & 0xff], x1);
+    n1 = t1 * t1 * SimplexGrad(perm[i1 & 0xff], x1);
 			// The maximum value of this noise is 8*(3/4)^4 = 2.53125
 			// A factor of 0.395 scales to fit exactly within [-1,1]
     return 0.395 * (n0 + n1);
@@ -147,7 +147,7 @@ float GetSimplexNoise2D(float2 pos)
     else
     {
         t0 *= t0;
-        n0 = t0 * t0 * Gradient(perm[ii + perm[jj]], x0, y0);
+        n0 = t0 * t0 * SimplexGrad(perm[ii + perm[jj]], x0, y0);
     }
 
     float t1 = 0.5f - x1 * x1 - y1 * y1;
@@ -156,7 +156,7 @@ float GetSimplexNoise2D(float2 pos)
     else
     {
         t1 *= t1;
-        n1 = t1 * t1 * Gradient(perm[ii + i1 + perm[jj + j1]], x1, y1);
+        n1 = t1 * t1 * SimplexGrad(perm[ii + i1 + perm[jj + j1]], x1, y1);
     }
 
     float t2 = 0.5f - x2 * x2 - y2 * y2;
@@ -165,7 +165,7 @@ float GetSimplexNoise2D(float2 pos)
     else
     {
         t2 *= t2;
-        n2 = t2 * t2 * Gradient(perm[ii + 1 + perm[jj + 1]], x2, y2);
+        n2 = t2 * t2 * SimplexGrad(perm[ii + 1 + perm[jj + 1]], x2, y2);
     }
 
 			// Add contributions from each corner to get the final noise value.
@@ -292,7 +292,7 @@ float GetSimplexNoise3D(float3 pos)
     else
     {
         t0 *= t0;
-        n0 = t0 * t0 * Gradient(perm[ii + perm[jj + perm[kk]]], x0, y0, z0);
+        n0 = t0 * t0 * SimplexGrad(perm[ii + perm[jj + perm[kk]]], x0, y0, z0);
     }
 
     float t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1;
@@ -301,7 +301,7 @@ float GetSimplexNoise3D(float3 pos)
     else
     {
         t1 *= t1;
-        n1 = t1 * t1 * Gradient(perm[ii + i1 + perm[jj + j1 + perm[kk + k1]]], x1, y1, z1);
+        n1 = t1 * t1 * SimplexGrad(perm[ii + i1 + perm[jj + j1 + perm[kk + k1]]], x1, y1, z1);
     }
 
     float t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2;
@@ -310,7 +310,7 @@ float GetSimplexNoise3D(float3 pos)
     else
     {
         t2 *= t2;
-        n2 = t2 * t2 * Gradient(perm[ii + i2 + perm[jj + j2 + perm[kk + k2]]], x2, y2, z2);
+        n2 = t2 * t2 * SimplexGrad(perm[ii + i2 + perm[jj + j2 + perm[kk + k2]]], x2, y2, z2);
     }
 
     float t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3;
@@ -319,7 +319,7 @@ float GetSimplexNoise3D(float3 pos)
     else
     {
         t3 *= t3;
-        n3 = t3 * t3 * Gradient(perm[ii + 1 + perm[jj + 1 + perm[kk + 1]]], x3, y3, z3);
+        n3 = t3 * t3 * SimplexGrad(perm[ii + 1 + perm[jj + 1 + perm[kk + 1]]], x3, y3, z3);
     }
 
 	// Add contributions from each corner to get the final noise value.
