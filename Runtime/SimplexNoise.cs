@@ -18,6 +18,7 @@ namespace UnityNoise
 				case 1: return CalcNoise1D(pos.x * 0.5f);
 				case 2: return CalcNoise2D(new Vector2(pos.x * 0.5f, pos.y * 0.5f));
 				case 3: return CalcNoise3D(new Vector3(pos.x * 0.5f, pos.y * 0.5f, pos.z * 0.5f));
+				case 4: return CalcNoise4D(pos * 0.5f);
 				default: return 0;
 			}
 		}
@@ -213,6 +214,128 @@ namespace UnityNoise
 			// Add contributions from each corner to get the final noise value.
 			// The result is scaled to stay just inside [-1,1]
 			return 32.0f * (n0 + n1 + n2 + n3); // TODO: The scale factor is preliminary!
+		}
+
+		//TODO: review copilot generated code
+		private static float CalcNoise4D(Vector4 pos)
+		{
+			// Skewing and unskewing factors for 4D
+			const float F4 = 0.309016994f; // (Math.Sqrt(5.0) - 1.0) / 4.0
+			const float G4 = 0.138196601f; // (5.0 - Math.Sqrt(5.0)) / 20.0
+
+			float n0, n1, n2, n3, n4; // Noise contributions from the five corners
+
+			// Skew the input space to determine which simplex cell we're in
+			float s = (pos.x + pos.y + pos.z + pos.w) * F4; // Factor for 4D
+			float xs = pos.x + s;
+			float ys = pos.y + s;
+			float zs = pos.z + s;
+			float ws = pos.w + s;
+			int i = FastFloor(xs);
+			int j = FastFloor(ys);
+			int k = FastFloor(zs);
+			int l = FastFloor(ws);
+
+			float t = (i + j + k + l) * G4;
+			float X0 = i - t; // Unskew the cell origin back to (x,y,z,w) space
+			float Y0 = j - t;
+			float Z0 = k - t;
+			float W0 = l - t;
+			float x0 = pos.x - X0; // The x,y,z,w distances from the cell origin
+			float y0 = pos.y - Y0;
+			float z0 = pos.z - Z0;
+			float w0 = pos.w - W0;
+
+			// For the 4D case, the simplex is a 4D shape (hypertetrahedron)
+			// Determine which simplex we are in
+			int[] rank = { 0, 0, 0, 0 };
+			if(x0 > y0) rank[0]++; else rank[1]++;
+			if(x0 > z0) rank[0]++; else rank[2]++;
+			if(x0 > w0) rank[0]++; else rank[3]++;
+			if(y0 > z0) rank[1]++; else rank[2]++;
+			if(y0 > w0) rank[1]++; else rank[3]++;
+			if(z0 > w0) rank[2]++; else rank[3]++;
+
+			int i1 = rank[0] >= 3 ? 1 : 0;
+			int j1 = rank[1] >= 3 ? 1 : 0;
+			int k1 = rank[2] >= 3 ? 1 : 0;
+			int l1 = rank[3] >= 3 ? 1 : 0;
+			int i2 = rank[0] >= 2 ? 1 : 0;
+			int j2 = rank[1] >= 2 ? 1 : 0;
+			int k2 = rank[2] >= 2 ? 1 : 0;
+			int l2 = rank[3] >= 2 ? 1 : 0;
+			int i3 = rank[0] >= 1 ? 1 : 0;
+			int j3 = rank[1] >= 1 ? 1 : 0;
+			int k3 = rank[2] >= 1 ? 1 : 0;
+			int l3 = rank[3] >= 1 ? 1 : 0;
+
+			// Offsets for the remaining corners
+			float x1 = x0 - i1 + G4;
+			float y1 = y0 - j1 + G4;
+			float z1 = z0 - k1 + G4;
+			float w1 = w0 - l1 + G4;
+			float x2 = x0 - i2 + 2.0f * G4;
+			float y2 = y0 - j2 + 2.0f * G4;
+			float z2 = z0 - k2 + 2.0f * G4;
+			float w2 = w0 - l2 + 2.0f * G4;
+			float x3 = x0 - i3 + 3.0f * G4;
+			float y3 = y0 - j3 + 3.0f * G4;
+			float z3 = z0 - k3 + 3.0f * G4;
+			float w3 = w0 - l3 + 3.0f * G4;
+			float x4 = x0 - 1.0f + 4.0f * G4;
+			float y4 = y0 - 1.0f + 4.0f * G4;
+			float z4 = z0 - 1.0f + 4.0f * G4;
+			float w4 = w0 - 1.0f + 4.0f * G4;
+
+			// Wrap the integer indices at 256, to avoid indexing perm[] out of bounds
+			int ii = Mod(i, 256);
+			int jj = Mod(j, 256);
+			int kk = Mod(k, 256);
+			int ll = Mod(l, 256);
+
+			// Calculate the contribution from the five corners
+			float t0 = 0.6f - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
+			if(t0 < 0.0f) n0 = 0.0f;
+			else
+			{
+				t0 *= t0;
+				n0 = t0 * t0 * Gradient(perm[ii + perm[jj + perm[kk + perm[ll]]]], x0, y0, z0, w0);
+			}
+
+			float t1 = 0.6f - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
+			if(t1 < 0.0f) n1 = 0.0f;
+			else
+			{
+				t1 *= t1;
+				n1 = t1 * t1 * Gradient(perm[ii + i1 + perm[jj + j1 + perm[kk + k1 + perm[ll + l1]]]], x1, y1, z1, w1);
+			}
+
+			float t2 = 0.6f - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
+			if(t2 < 0.0f) n2 = 0.0f;
+			else
+			{
+				t2 *= t2;
+				n2 = t2 * t2 * Gradient(perm[ii + i2 + perm[jj + j2 + perm[kk + k2 + perm[ll + l2]]]], x2, y2, z2, w2);
+			}
+
+			float t3 = 0.6f - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
+			if(t3 < 0.0f) n3 = 0.0f;
+			else
+			{
+				t3 *= t3;
+				n3 = t3 * t3 * Gradient(perm[ii + i3 + perm[jj + j3 + perm[kk + k3 + perm[ll + l3]]]], x3, y3, z3, w3);
+			}
+
+			float t4 = 0.6f - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
+			if(t4 < 0.0f) n4 = 0.0f;
+			else
+			{
+				t4 *= t4;
+				n4 = t4 * t4 * Gradient(perm[ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]]], x4, y4, z4, w4);
+			}
+
+			// Sum up and scale the result to fit within the interval [-1, 1]
+			return 27.0f * (n0 + n1 + n2 + n3 + n4); // Preliminary scale factor
 		}
 
 		private static byte[] perm = new byte[512] { 151,160,137,91,90,15,
