@@ -84,16 +84,17 @@ float GetSimplexNoise1D(float x)
     n1 = t1 * t1 * SimplexGrad(perm[i1 & 0xff], x1);
 			// The maximum value of this noise is 8*(3/4)^4 = 2.53125
 			// A factor of 0.395 scales to fit exactly within [-1,1]
-    return (0.21 * (n0 + n1)) + 0.5;
+    float n = (0.21 * (n0 + n1)) + 0.5;
+    return n * n;
 }
 
 float GetSimplexNoise2D(float2 pos)
 {
     pos *= 0.5;
     // F2 = 0.5*(sqrt(3.0)-1.0)
-    #define F2 0.366025403f
+#define F2 0.366025403f
     // G2 = (3.0-Math.sqrt(3.0))/6.0
-    #define G2 0.211324865f
+#define G2 0.211324865f
 
     float n0, n1, n2; // Noise contributions from the three corners
 
@@ -167,7 +168,9 @@ float GetSimplexNoise2D(float2 pos)
 
     // Add contributions from each corner to get the final noise value.
     // The result is scaled to return values in the interval [-1,1].
-    return (22.0 * (n0 + n1 + n2)) + 0.5;
+    float n = 22.0 * (n0 + n1 + n2);
+    n = n + 0.5;
+    return n * n;
 }
 
 float GetSimplexNoise3D(float3 pos)
@@ -322,7 +325,9 @@ float GetSimplexNoise3D(float3 pos)
 
 	// Add contributions from each corner to get the final noise value.
 	// The result is scaled to stay just inside [-1,1]
-    return (16.0 * (n0 + n1 + n2 + n3)) + 0.5; // TODO: The scale factor is preliminary!
+    float n = (16.0 * (n0 + n1 + n2 + n3)) + 0.5; // TODO: The scale factor is preliminary!
+    n *= n;
+    return saturate(n);
 }
 
 float GetSimplexNoise4D(float4 pos)
@@ -445,7 +450,8 @@ float GetSimplexNoise4D(float4 pos)
 
     // Add contributions from each corner to get the final noise value.
     // The result is scaled to stay just inside [-1,1]
-    return (13.0 * (n0 + n1 + n2 + n3 + n4)) + 0.5;
+    float n = (13.0 * (n0 + n1 + n2 + n3 + n4)) + 0.5;
+    return n * n;
 }
 
 
@@ -459,7 +465,7 @@ float ComputeSimplexNoise1D(float pos, FractalSettings settings)
         pos *= settings.lacunarity;
         intensity *= settings.persistence;
     }
-    return saturate(v * 0.5 + 0.5);
+    return v;
 }
 
 float ComputeSimplexNoise2D(float2 pos, FractalSettings settings)
@@ -472,7 +478,7 @@ float ComputeSimplexNoise2D(float2 pos, FractalSettings settings)
         pos *= settings.lacunarity;
         intensity *= settings.persistence;
     }
-    return saturate(v * 0.5 + 0.5);
+    return v;
 }
 
 float ComputeSimplexNoise3D(float3 pos, FractalSettings settings)
@@ -485,7 +491,7 @@ float ComputeSimplexNoise3D(float3 pos, FractalSettings settings)
         pos *= settings.lacunarity;
         intensity *= settings.persistence;
     }
-    return saturate(v * 0.5 + 0.5);
+    return v;
 }
 
 float ComputeSimplexNoise4D(float4 pos, FractalSettings settings)
@@ -498,5 +504,5 @@ float ComputeSimplexNoise4D(float4 pos, FractalSettings settings)
         pos *= settings.lacunarity;
         intensity *= settings.persistence;
     }
-    return saturate(v * 0.5 + 0.5);
+    return v;
 }
