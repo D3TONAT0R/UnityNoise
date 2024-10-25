@@ -88,9 +88,8 @@ float GetSimplexNoise1D(float x)
     n1 = t1 * t1 * SimplexGrad(perm[i1 & 0xff], x1);
 			// The maximum value of this noise is 8*(3/4)^4 = 2.53125
 			// A factor of 0.395 scales to fit exactly within [-1,1]
-    return 0.395 * (n0 + n1);
+    return (0.21 * (n0 + n1)) + 0.5;
 }
-
 float GetSimplexNoise2D(float2 pos)
 {
     // F2 = 0.5*(sqrt(3.0)-1.0)
@@ -100,7 +99,7 @@ float GetSimplexNoise2D(float2 pos)
 
     float n0, n1, n2; // Noise contributions from the three corners
 
-	// Skew the input space to determine which simplex cell we're in
+    // Skew the input space to determine which simplex cell we're in
     float s = (pos.x + pos.y) * F2; // Hairy factor for 2D
     float xs = pos.x + s;
     float ys = pos.y + s;
@@ -113,8 +112,8 @@ float GetSimplexNoise2D(float2 pos)
     float x0 = pos.x - X0; // The x,y distances from the cell origin
     float y0 = pos.y - Y0;
 
-	// For the 2D case, the simplex shape is an equilateral triangle.
-	// Determine which simplex we are in.
+    // For the 2D case, the simplex shape is an equilateral triangle.
+    // Determine which simplex we are in.
     int i1, j1; // Offsets for second (middle) corner of simplex in (i,j) coords
     if (x0 > y0)
     {
@@ -127,20 +126,20 @@ float GetSimplexNoise2D(float2 pos)
         j1 = 1;
     } // upper triangle, YX order: (0,0)->(0,1)->(1,1)
 
-	// A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
-	// a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
-	// c = (3-sqrt(3))/6
+    // A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
+    // a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
+    // c = (3-sqrt(3))/6
 
     float x1 = x0 - i1 + G2; // Offsets for middle corner in (x,y) unskewed coords
     float y1 = y0 - j1 + G2;
     float x2 = x0 - 1.0 + 2.0 * G2; // Offsets for last corner in (x,y) unskewed coords
     float y2 = y0 - 1.0 + 2.0 * G2;
 
-	// Wrap the integer indices at 256, to avoid indexing perm[] out of bounds
-    int ii = i % 256;
-    int jj = j % 256;
+    // Wrap the integer indices at 256, to avoid indexing perm[] out of bounds
+    int ii = i & 0xff;
+    int jj = j & 0xff;
 
-	// Calculate the contribution from the three corners
+    // Calculate the contribution from the three corners
     float t0 = 0.5f - x0 * x0 - y0 * y0;
     if (t0 < 0.0)
         n0 = 0.0;
@@ -168,16 +167,16 @@ float GetSimplexNoise2D(float2 pos)
         n2 = t2 * t2 * SimplexGrad(perm[ii + 1 + perm[jj + 1]], x2, y2);
     }
 
-			// Add contributions from each corner to get the final noise value.
-			// The result is scaled to return values in the interval [-1,1].
-    return 40.0 * (n0 + n1 + n2); // TODO: The scale factor is preliminary!
+    // Add contributions from each corner to get the final noise value.
+    // The result is scaled to return values in the interval [-1,1].
+    return (22.0 * (n0 + n1 + n2)) + 0.5;
 }
 
 float GetSimplexNoise3D(float3 pos)
 {
 	// Simple skewing factors for the 3D case
-#define F3 0.333333333
-#define G3 0.166666667
+    #define F3 0.333333333
+    #define G3 0.166666667
 
     float n0, n1, n2, n3; // Noise contributions from the four corners
 
@@ -324,8 +323,131 @@ float GetSimplexNoise3D(float3 pos)
 
 	// Add contributions from each corner to get the final noise value.
 	// The result is scaled to stay just inside [-1,1]
-    return 32.0 * (n0 + n1 + n2 + n3); // TODO: The scale factor is preliminary!
+    return (16.0 * (n0 + n1 + n2 + n3)) + 0.5; // TODO: The scale factor is preliminary!
 }
+
+float GetSimplexNoise4D(float4 pos)
+{
+    // Simple skewing factors for the 4D case
+#define F4 0.309016994f // (sqrt(5.0)-1.0)/4.0
+#define G4 0.138196601f // (5.0-sqrt(5.0))/20.0
+
+    float n0, n1, n2, n3, n4; // Noise contributions from the five corners
+
+    // Skew the input space to determine which simplex cell we're in
+    float s = (pos.x + pos.y + pos.z + pos.w) * F4; // Factor for 4D
+    int i = floor(pos.x + s);
+    int j = floor(pos.y + s);
+    int k = floor(pos.z + s);
+    int l = floor(pos.w + s);
+
+    float t = (i + j + k + l) * G4;
+    float X0 = i - t; // Unskew the cell origin back to (x,y,z,w) space
+    float Y0 = j - t;
+    float Z0 = k - t;
+    float W0 = l - t;
+    float x0 = pos.x - X0; // The x,y,z,w distances from the cell origin
+    float y0 = pos.y - Y0;
+    float z0 = pos.z - Z0;
+    float w0 = pos.w - W0;
+
+    // For the 4D case, the simplex shape is a slightly irregular 5-cell.
+    // Determine which simplex we are in.
+    int rankx = (x0 > y0) + (x0 > z0) + (x0 > w0);
+    int ranky = (y0 > x0) + (y0 > z0) + (y0 > w0);
+    int rankz = (z0 > x0) + (z0 > y0) + (z0 > w0);
+    int rankw = (w0 > x0) + (w0 > y0) + (w0 > z0);
+
+    int i1 = rankx >= 3 ? 1 : 0;
+    int j1 = ranky >= 3 ? 1 : 0;
+    int k1 = rankz >= 3 ? 1 : 0;
+    int l1 = rankw >= 3 ? 1 : 0;
+
+    int i2 = rankx >= 2 ? 1 : 0;
+    int j2 = ranky >= 2 ? 1 : 0;
+    int k2 = rankz >= 2 ? 1 : 0;
+    int l2 = rankw >= 2 ? 1 : 0;
+
+    int i3 = rankx >= 1 ? 1 : 0;
+    int j3 = ranky >= 1 ? 1 : 0;
+    int k3 = rankz >= 1 ? 1 : 0;
+    int l3 = rankw >= 1 ? 1 : 0;
+
+    // Offsets for the remaining corners
+    float x1 = x0 - i1 + G4;
+    float y1 = y0 - j1 + G4;
+    float z1 = z0 - k1 + G4;
+    float w1 = w0 - l1 + G4;
+    float x2 = x0 - i2 + 2.0 * G4;
+    float y2 = y0 - j2 + 2.0 * G4;
+    float z2 = z0 - k2 + 2.0 * G4;
+    float w2 = w0 - l2 + 2.0 * G4;
+    float x3 = x0 - i3 + 3.0 * G4;
+    float y3 = y0 - j3 + 3.0 * G4;
+    float z3 = z0 - k3 + 3.0 * G4;
+    float w3 = w0 - l3 + 3.0 * G4;
+    float x4 = x0 - 1.0 + 4.0 * G4;
+    float y4 = y0 - 1.0 + 4.0 * G4;
+    float z4 = z0 - 1.0 + 4.0 * G4;
+    float w4 = w0 - 1.0 + 4.0 * G4;
+
+    // Wrap the integer indices at 256, to avoid indexing perm[] out of bounds
+    int ii = mod(i, 256);
+    int jj = mod(j, 256);
+    int kk = mod(k, 256);
+    int ll = mod(l, 256);
+
+    // Calculate the contribution from the five corners
+    float t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
+    if (t0 < 0.0)
+        n0 = 0.0;
+    else
+    {
+        t0 *= t0;
+        n0 = t0 * t0 * SimplexGrad(perm[ii + perm[jj + perm[kk + perm[ll]]]], x0, y0, z0, w0);
+    }
+
+    float t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
+    if (t1 < 0.0)
+        n1 = 0.0;
+    else
+    {
+        t1 *= t1;
+        n1 = t1 * t1 * SimplexGrad(perm[ii + i1 + perm[jj + j1 + perm[kk + k1 + perm[ll + l1]]]], x1, y1, z1, w1);
+    }
+
+    float t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
+    if (t2 < 0.0)
+        n2 = 0.0;
+    else
+    {
+        t2 *= t2;
+        n2 = t2 * t2 * SimplexGrad(perm[ii + i2 + perm[jj + j2 + perm[kk + k2 + perm[ll + l2]]]], x2, y2, z2, w2);
+    }
+
+    float t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
+    if (t3 < 0.0)
+        n3 = 0.0;
+    else
+    {
+        t3 *= t3;
+        n3 = t3 * t3 * SimplexGrad(perm[ii + i3 + perm[jj + j3 + perm[kk + k3 + perm[ll + l3]]]], x3, y3, z3, w3);
+    }
+
+    float t4 = 0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
+    if (t4 < 0.0)
+        n4 = 0.0;
+    else
+    {
+        t4 *= t4;
+        n4 = t4 * t4 * SimplexGrad(perm[ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]]], x4, y4, z4, w4);
+    }
+
+    // Add contributions from each corner to get the final noise value.
+    // The result is scaled to stay just inside [-1,1]
+    return (13.0 * (n0 + n1 + n2 + n3 + n4)) + 0.5;
+}
+
 
 float ComputeSimplexNoise1D(float pos, FractalSettings settings)
 {
@@ -360,6 +482,19 @@ float ComputeSimplexNoise3D(float3 pos, FractalSettings settings)
     FOR_FRACTAL
     {
         v += GetSimplexNoise3D(pos) * intensity;
+        pos *= settings.lacunarity;
+        intensity *= settings.persistence;
+    }
+    return saturate(v * 0.5 + 0.5);
+}
+
+float ComputeSimplexNoise4D(float4 pos, FractalSettings settings)
+{
+    float v = 0.0;
+    float intensity = 1.0;
+    FOR_FRACTAL
+    {
+        v += GetSimplexNoise4D(pos) * intensity;
         pos *= settings.lacunarity;
         intensity *= settings.persistence;
     }
