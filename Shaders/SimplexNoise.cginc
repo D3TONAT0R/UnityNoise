@@ -30,12 +30,6 @@ static const uint perm[512] =
 	138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
 };
 
-int mod(int x, int m)
-{
-    int a = x % m;
-    return a < 0 ? a + m : a;
-}
-
 float SimplexGrad(int hash, float x)
 {
     int h = hash & 15;
@@ -72,6 +66,8 @@ float SimplexGrad(int hash, float x, float y, float z, float t)
 
 float GetSimplexNoise1D(float x)
 {
+    x *= 0.5;
+    
     int i0 = floor(x);
     int i1 = i0 + 1;
     float x0 = x - i0;
@@ -90,12 +86,14 @@ float GetSimplexNoise1D(float x)
 			// A factor of 0.395 scales to fit exactly within [-1,1]
     return (0.21 * (n0 + n1)) + 0.5;
 }
+
 float GetSimplexNoise2D(float2 pos)
 {
+    pos *= 0.5;
     // F2 = 0.5*(sqrt(3.0)-1.0)
-#define F2 0.366025403f
+    #define F2 0.366025403f
     // G2 = (3.0-Math.sqrt(3.0))/6.0
-#define G2 0.211324865f
+    #define G2 0.211324865f
 
     float n0, n1, n2; // Noise contributions from the three corners
 
@@ -174,6 +172,7 @@ float GetSimplexNoise2D(float2 pos)
 
 float GetSimplexNoise3D(float3 pos)
 {
+    pos *= 0.5;
 	// Simple skewing factors for the 3D case
     #define F3 0.333333333
     #define G3 0.166666667
@@ -328,6 +327,7 @@ float GetSimplexNoise3D(float3 pos)
 
 float GetSimplexNoise4D(float4 pos)
 {
+    pos *= 0.5;
     // Simple skewing factors for the 4D case
 #define F4 0.309016994f // (sqrt(5.0)-1.0)/4.0
 #define G4 0.138196601f // (5.0-sqrt(5.0))/20.0

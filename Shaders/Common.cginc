@@ -1,3 +1,6 @@
+#ifndef UNITY_NOISE_COMMON_INCLUDED
+#define UNITY_NOISE_COMMON_INCLUDED
+
 #define FOR_FRACTAL for(int i = 0; i < min(settings.octaves, 8); i++)
 
 struct FractalSettings
@@ -28,3 +31,11 @@ half hash(float3 pos)
 {
     return hash(float4(pos, 0.0));
 }
+
+int mod(int x, int m)
+{
+    int a = x % m;
+    return a < 0 ? a + m : a;
+}
+
+#endif

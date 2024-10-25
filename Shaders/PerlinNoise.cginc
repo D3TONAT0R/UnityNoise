@@ -1,11 +1,5 @@
 #include "Common.cginc"
 
-int mod(int x, int m)
-{
-	int a = x % m;
-	return a < 0 ? a + m : a;
-}
-
 float2 GetRandomDir(float2 i)
 {
     float rand = hash(i) * 6.282;
@@ -56,7 +50,7 @@ float GetPerlinNoise1D(float x)
     float wx = x - x1;
     float g0 = DotGrid(float2(x, x), x1);
     float g1 = DotGrid(float2(x, x), x2);
-    return PowLerp(g0, g1, wx) * 2.0;
+    return PowLerp(g0, g1, wx) * 0.84 + 0.455;
 
 }
 
@@ -73,7 +67,7 @@ float GetPerlinNoise2D(float2 pos)
     float ix0 = PowLerp(g00, g10, w.x);
     float ix1 = PowLerp(g01, g11, w.x);
 	//Interpolate on y axis
-    return PowLerp(ix0, ix1, w.y) * 2.0;
+    return PowLerp(ix0, ix1, w.y) * 0.74 + 0.49;
 }
 
 float GetPerlinNoise3D(float3 pos)
@@ -98,7 +92,7 @@ float GetPerlinNoise3D(float3 pos)
 	float ixy0 = PowLerp(ix00, ix10, w.y);
 	float ixy1 = PowLerp(ix01, ix11, w.y);
 	//Interpolate on z axis
-    return PowLerp(ixy0, ixy1, w.z) * 2.0;
+    return PowLerp(ixy0, ixy1, w.z) * 0.8 + 0.48;
 }
 
 float GetPerlinNoise4D(float4 pos)
@@ -140,7 +134,7 @@ float GetPerlinNoise4D(float4 pos)
 	float iz0 = PowLerp(iy00, iy10, w.z);
 	float iz1 = PowLerp(iy01, iy11, w.z);
 	//Interpolate on w axis
-	return PowLerp(iz0, iz1, w.w) * 2.0;
+	return PowLerp(iz0, iz1, w.w) * 0.9 + 0.5;
 }
 
 float ComputePerlinNoise1D(float pos, FractalSettings settings)
