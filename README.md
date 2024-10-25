@@ -11,7 +11,7 @@ A Unity package that contains a collection of functions for generating various k
 |Type           |1D                |2D                |3D                |4D                |
 |---------------|------------------|------------------|------------------|------------------|
 |Perlin         |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-|Simplex        |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:x:               |
+|Simplex        |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Voronoi        |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Cellular       |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 
