@@ -72,4 +72,14 @@ float normalToUniform(float x, float stdDev)
     return normalCDF(x, 0.5, stdDev);
 }
 
+void addNoise(inout float v, float b, float intensity)
+{
+    v = lerp(v, b, intensity);
+}
+
+void addNoise(inout float2 v, float2 b, float intensity)
+{
+    v = lerp(v, b, intensity);
+}
+
 #endif

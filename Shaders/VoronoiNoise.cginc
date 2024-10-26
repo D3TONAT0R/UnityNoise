@@ -17,11 +17,11 @@ half3 GetCell(float d, half3 pos)
 
 half4 GetCell(float d, half4 pos)
 {
-    half x = hash(pos.x * 21.73 + pos.y * 32.19 + pos.z * 47.93) * 0.37 * d;
-    half y = hash(pos.x * 17.37 + pos.y * 9.73 + pos.z * 7.21) * 0.37 * d;
-    half z = hash(pos.x * 9.41 + pos.y * 91.27 + pos.z * 13.79) * 0.37 * d;
+	half x = hash(pos.x * 21.73 + pos.y * 32.19 + pos.z * 47.93) * 0.37 * d;
+	half y = hash(pos.x * 17.37 + pos.y * 9.73 + pos.z * 7.21) * 0.37 * d;
+	half z = hash(pos.x * 9.41 + pos.y * 91.27 + pos.z * 13.79) * 0.37 * d;
 	half w = hash(pos.x * 13.79 + pos.y * 9.41 + pos.z * 91.27) * 0.37 * d;
-    return pos + half4(x, y, z, w);
+	return pos + half4(x, y, z, w);
 }
 
 #ifndef VORONOI_DISTANCE_FUNC
@@ -30,37 +30,37 @@ half4 GetCell(float d, half4 pos)
 
 float manhattanDistance(float2 a, float2 b)
 {
-    return (abs(b.x - a.x) + abs(b.y - a.y)) * 0.5;
+	return (abs(b.x - a.x) + abs(b.y - a.y)) * 0.5;
 }
 
 float manhattanDistance(float3 a, float3 b)
 {
-    return (abs(b.x - a.x) + abs(b.y - a.y) + abs(b.z - a.z)) * 0.5;
+	return (abs(b.x - a.x) + abs(b.y - a.y) + abs(b.z - a.z)) * 0.5;
 }
 
 float manhattanDistance(float4 a, float4 b)
 {
-    return (abs(b.x - a.x) + abs(b.y - a.y) + abs(b.z - a.z) + abs(b.w - a.w)) * 0.5;
+	return (abs(b.x - a.x) + abs(b.y - a.y) + abs(b.z - a.z) + abs(b.w - a.w)) * 0.5;
 }
 
 float chebyshevDistance(float2 a, float2 b)
 {
-    return max(abs(b.x - a.x), abs(b.y - a.y));
+	return max(abs(b.x - a.x), abs(b.y - a.y));
 }
 
 float chebyshevDistance(float3 a, float3 b)
 {
-    return max(max(abs(b.x - a.x), abs(b.y - a.y)), abs(b.z - a.z));
+	return max(max(abs(b.x - a.x), abs(b.y - a.y)), abs(b.z - a.z));
 }
 
 float chebyshevDistance(float4 a, float4 b)
 {
-    return max(max(max(abs(b.x - a.x), abs(b.y - a.y)), abs(b.z - a.z)), abs(b.w - a.w));
+	return max(max(max(abs(b.x - a.x), abs(b.y - a.y)), abs(b.z - a.z)), abs(b.w - a.w));
 }
 
 half nearest(half min, inout half2 nearestCell, half2 pos, half2 cell)
 {
-    half dist = VORONOI_DISTANCE_FUNC(pos, cell);
+	half dist = VORONOI_DISTANCE_FUNC(pos, cell);
 	if (dist < min)
 	{
 		min = dist;
@@ -71,24 +71,24 @@ half nearest(half min, inout half2 nearestCell, half2 pos, half2 cell)
 
 half nearest(half min, inout half3 nearestCell, half3 pos, half3 cell)
 {
-    half dist = VORONOI_DISTANCE_FUNC(pos, cell);
-    if (dist < min)
-    {
-        min = dist;
-        nearestCell = cell;
-    }
-    return min;
+	half dist = VORONOI_DISTANCE_FUNC(pos, cell);
+	if (dist < min)
+	{
+		min = dist;
+		nearestCell = cell;
+	}
+	return min;
 }
 
 half nearest(half min, inout half4 nearestCell, half4 pos, half4 cell)
 {
-    half dist = VORONOI_DISTANCE_FUNC(pos, cell);
-    if (dist < min)
-    {
-        min = dist;
-        nearestCell = cell;
-    }
-    return min;
+	half dist = VORONOI_DISTANCE_FUNC(pos, cell);
+	if (dist < min)
+	{
+		min = dist;
+		nearestCell = cell;
+	}
+	return min;
 }
 
 half2 GetVoronoiNoise1D(float pos, float d)
@@ -211,33 +211,33 @@ half2 GetVoronoiNoise3D(float3 pos, float s)
 half2 GetVoronoiNoise4D(float4 pos, float s)
 {
 	int x1 = floor(pos.x);
-    int x2 = x1 + 1;
-    int x0 = x1 - 1;
-    int y1 = floor(pos.y);
-    int y2 = y1 + 1;
-    int y0 = y1 - 1;
-    int z1 = floor(pos.z);
-    int z2 = z1 + 1;
-    int z0 = z1 - 1;
-    int w1 = floor(pos.w);
-    int w2 = w1 + 1;
-    int w0 = w1 - 1;
-    half4 c0000 = GetCell(s, half4(x0, y0, z0, w0));
-    half4 c1000 = GetCell(s, half4(x1, y0, z0, w0));
-    half4 c2000 = GetCell(s, half4(x2, y0, z0, w0));
-    half4 c0100 = GetCell(s, half4(x0, y1, z0, w0));
-    half4 c1100 = GetCell(s, half4(x1, y1, z0, w0));
-    half4 c2100 = GetCell(s, half4(x2, y1, z0, w0));
-    half4 c0200 = GetCell(s, half4(x0, y2, z0, w0));
-    half4 c1200 = GetCell(s, half4(x1, y2, z0, w0));
-    half4 c2200 = GetCell(s, half4(x2, y2, z0, w0));
-    half4 c0010 = GetCell(s, half4(x0, y0, z1, w0));
-    half4 c1010 = GetCell(s, half4(x1, y0, z1, w0));
-    half4 c2010 = GetCell(s, half4(x2, y0, z1, w0));
-    half4 c0110 = GetCell(s, half4(x0, y1, z1, w0));
-    half4 c1110 = GetCell(s, half4(x1, y1, z1, w0));
-    half4 c2110 = GetCell(s, half4(x2, y1, z1, w0));
-    half4 c0210 = GetCell(s, half4(x0, y2, z1, w0));
+	int x2 = x1 + 1;
+	int x0 = x1 - 1;
+	int y1 = floor(pos.y);
+	int y2 = y1 + 1;
+	int y0 = y1 - 1;
+	int z1 = floor(pos.z);
+	int z2 = z1 + 1;
+	int z0 = z1 - 1;
+	int w1 = floor(pos.w);
+	int w2 = w1 + 1;
+	int w0 = w1 - 1;
+	half4 c0000 = GetCell(s, half4(x0, y0, z0, w0));
+	half4 c1000 = GetCell(s, half4(x1, y0, z0, w0));
+	half4 c2000 = GetCell(s, half4(x2, y0, z0, w0));
+	half4 c0100 = GetCell(s, half4(x0, y1, z0, w0));
+	half4 c1100 = GetCell(s, half4(x1, y1, z0, w0));
+	half4 c2100 = GetCell(s, half4(x2, y1, z0, w0));
+	half4 c0200 = GetCell(s, half4(x0, y2, z0, w0));
+	half4 c1200 = GetCell(s, half4(x1, y2, z0, w0));
+	half4 c2200 = GetCell(s, half4(x2, y2, z0, w0));
+	half4 c0010 = GetCell(s, half4(x0, y0, z1, w0));
+	half4 c1010 = GetCell(s, half4(x1, y0, z1, w0));
+	half4 c2010 = GetCell(s, half4(x2, y0, z1, w0));
+	half4 c0110 = GetCell(s, half4(x0, y1, z1, w0));
+	half4 c1110 = GetCell(s, half4(x1, y1, z1, w0));
+	half4 c2110 = GetCell(s, half4(x2, y1, z1, w0));
+	half4 c0210 = GetCell(s, half4(x0, y2, z1, w0));
 	half4 c1210 = GetCell(s, half4(x1, y2, z1, w0));
 	half4 c2210 = GetCell(s, half4(x2, y2, z1, w0));
 	half4 c0020 = GetCell(s, half4(x0, y0, z2, w0));
@@ -332,60 +332,60 @@ half2 GetVoronoiNoise4D(float4 pos, float s)
 	min = nearest(min, nearestCell, pos, c0220);
 	min = nearest(min, nearestCell, pos, c1220);
 	min = nearest(min, nearestCell, pos, c2220);
-    min = nearest(min, nearestCell, pos, c0001);
-    min = nearest(min, nearestCell, pos, c1001);
-    min = nearest(min, nearestCell, pos, c2001);
-    min = nearest(min, nearestCell, pos, c0101);
-    min = nearest(min, nearestCell, pos, c1101);
-    min = nearest(min, nearestCell, pos, c2101);
-    min = nearest(min, nearestCell, pos, c0201);
-    min = nearest(min, nearestCell, pos, c1201);
-    min = nearest(min, nearestCell, pos, c2201);
-    min = nearest(min, nearestCell, pos, c0011);
-    min = nearest(min, nearestCell, pos, c1011);
-    min = nearest(min, nearestCell, pos, c2011);
-    min = nearest(min, nearestCell, pos, c0111);
-    min = nearest(min, nearestCell, pos, c1111);
-    min = nearest(min, nearestCell, pos, c2111);
-    min = nearest(min, nearestCell, pos, c0211);
-    min = nearest(min, nearestCell, pos, c1211);
-    min = nearest(min, nearestCell, pos, c2211);
-    min = nearest(min, nearestCell, pos, c0021);
-    min = nearest(min, nearestCell, pos, c1021);
-    min = nearest(min, nearestCell, pos, c2021);
-    min = nearest(min, nearestCell, pos, c0121);
-    min = nearest(min, nearestCell, pos, c1121);
-    min = nearest(min, nearestCell, pos, c2121);
-    min = nearest(min, nearestCell, pos, c0221);
-    min = nearest(min, nearestCell, pos, c1221);
-    min = nearest(min, nearestCell, pos, c2221);
-    min = nearest(min, nearestCell, pos, c0002);
-    min = nearest(min, nearestCell, pos, c1002);
-    min = nearest(min, nearestCell, pos, c2002);
-    min = nearest(min, nearestCell, pos, c0102);
-    min = nearest(min, nearestCell, pos, c1102);
-    min = nearest(min, nearestCell, pos, c2102);
-    min = nearest(min, nearestCell, pos, c0202);
-    min = nearest(min, nearestCell, pos, c1202);
-    min = nearest(min, nearestCell, pos, c2202);
-    min = nearest(min, nearestCell, pos, c0012);
-    min = nearest(min, nearestCell, pos, c1012);
-    min = nearest(min, nearestCell, pos, c2012);
-    min = nearest(min, nearestCell, pos, c0112);
-    min = nearest(min, nearestCell, pos, c1112);
-    min = nearest(min, nearestCell, pos, c2112);
-    min = nearest(min, nearestCell, pos, c0212);
-    min = nearest(min, nearestCell, pos, c1212);
-    min = nearest(min, nearestCell, pos, c2212);
-    min = nearest(min, nearestCell, pos, c0022);
-    min = nearest(min, nearestCell, pos, c1022);
-    min = nearest(min, nearestCell, pos, c2022);
-    min = nearest(min, nearestCell, pos, c0122);
-    min = nearest(min, nearestCell, pos, c1122);
-    min = nearest(min, nearestCell, pos, c2122);
-    min = nearest(min, nearestCell, pos, c0222);
-    min = nearest(min, nearestCell, pos, c1222);
-    min = nearest(min, nearestCell, pos, c2222);
+	min = nearest(min, nearestCell, pos, c0001);
+	min = nearest(min, nearestCell, pos, c1001);
+	min = nearest(min, nearestCell, pos, c2001);
+	min = nearest(min, nearestCell, pos, c0101);
+	min = nearest(min, nearestCell, pos, c1101);
+	min = nearest(min, nearestCell, pos, c2101);
+	min = nearest(min, nearestCell, pos, c0201);
+	min = nearest(min, nearestCell, pos, c1201);
+	min = nearest(min, nearestCell, pos, c2201);
+	min = nearest(min, nearestCell, pos, c0011);
+	min = nearest(min, nearestCell, pos, c1011);
+	min = nearest(min, nearestCell, pos, c2011);
+	min = nearest(min, nearestCell, pos, c0111);
+	min = nearest(min, nearestCell, pos, c1111);
+	min = nearest(min, nearestCell, pos, c2111);
+	min = nearest(min, nearestCell, pos, c0211);
+	min = nearest(min, nearestCell, pos, c1211);
+	min = nearest(min, nearestCell, pos, c2211);
+	min = nearest(min, nearestCell, pos, c0021);
+	min = nearest(min, nearestCell, pos, c1021);
+	min = nearest(min, nearestCell, pos, c2021);
+	min = nearest(min, nearestCell, pos, c0121);
+	min = nearest(min, nearestCell, pos, c1121);
+	min = nearest(min, nearestCell, pos, c2121);
+	min = nearest(min, nearestCell, pos, c0221);
+	min = nearest(min, nearestCell, pos, c1221);
+	min = nearest(min, nearestCell, pos, c2221);
+	min = nearest(min, nearestCell, pos, c0002);
+	min = nearest(min, nearestCell, pos, c1002);
+	min = nearest(min, nearestCell, pos, c2002);
+	min = nearest(min, nearestCell, pos, c0102);
+	min = nearest(min, nearestCell, pos, c1102);
+	min = nearest(min, nearestCell, pos, c2102);
+	min = nearest(min, nearestCell, pos, c0202);
+	min = nearest(min, nearestCell, pos, c1202);
+	min = nearest(min, nearestCell, pos, c2202);
+	min = nearest(min, nearestCell, pos, c0012);
+	min = nearest(min, nearestCell, pos, c1012);
+	min = nearest(min, nearestCell, pos, c2012);
+	min = nearest(min, nearestCell, pos, c0112);
+	min = nearest(min, nearestCell, pos, c1112);
+	min = nearest(min, nearestCell, pos, c2112);
+	min = nearest(min, nearestCell, pos, c0212);
+	min = nearest(min, nearestCell, pos, c1212);
+	min = nearest(min, nearestCell, pos, c2212);
+	min = nearest(min, nearestCell, pos, c0022);
+	min = nearest(min, nearestCell, pos, c1022);
+	min = nearest(min, nearestCell, pos, c2022);
+	min = nearest(min, nearestCell, pos, c0122);
+	min = nearest(min, nearestCell, pos, c1122);
+	min = nearest(min, nearestCell, pos, c2122);
+	min = nearest(min, nearestCell, pos, c0222);
+	min = nearest(min, nearestCell, pos, c1222);
+	min = nearest(min, nearestCell, pos, c2222);
 	return half2(min * 1.8 - 1.0, hash(nearestCell));
 }
 
@@ -393,9 +393,9 @@ float2 ComputeVoronoiNoise1D(float pos, FractalSettings settings)
 {
 	float2 v = 0.0;
 	float intensity = 1.0;
-    FOR_FRACTAL
+	FOR_FRACTAL
 	{
-		v += GetVoronoiNoise1D(pos, 1) * intensity;
+		addNoise(v, GetVoronoiNoise1D(pos, 1.0), intensity);
 		pos *= settings.lacunarity;
 		intensity *= settings.persistence;
 	}
@@ -408,7 +408,7 @@ float2 ComputeVoronoiNoise2D(float2 pos, FractalSettings settings)
 	float intensity = 1.0;
 	FOR_FRACTAL
 	{
-		v += GetVoronoiNoise2D(pos, 1) * intensity;
+		addNoise(v, GetVoronoiNoise2D(pos, 1.0), intensity);
 		pos *= settings.lacunarity;
 		intensity *= settings.persistence;
 	}
@@ -419,9 +419,9 @@ float2 ComputeVoronoiNoise3D(float3 pos, FractalSettings settings)
 {
 	float2 v = 0.0;
 	float intensity = 1.0;
-    FOR_FRACTAL
+	FOR_FRACTAL
 	{
-		v += GetVoronoiNoise3D(pos, 1) * intensity;
+		addNoise(v, GetVoronoiNoise3D(pos, 1.0), intensity);
 		pos *= settings.lacunarity;
 		intensity *= settings.persistence;
 	}
@@ -432,9 +432,9 @@ float2 ComputeVoronoiNoise4D(float4 pos, FractalSettings settings)
 {
 	float2 v = 0.0;
 	float intensity = 1.0;
-    FOR_FRACTAL
+	FOR_FRACTAL
 	{
-		v += GetVoronoiNoise4D(pos, 1) * intensity;
+		addNoise(v, GetVoronoiNoise4D(pos, 1.0), intensity);
 		pos *= settings.lacunarity;
 		intensity *= settings.persistence;
 	}
