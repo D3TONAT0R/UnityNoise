@@ -50,8 +50,9 @@ float GetPerlinNoise1D(float x)
     float wx = x - x1;
     float g0 = DotGrid(float2(x, x), x1);
     float g1 = DotGrid(float2(x, x), x2);
-    float n = PowLerp(g0, g1, wx) * 0.84 + 0.4;
-    return n * n;
+    float n = PowLerp(g0, g1, wx) * 0.78 + 0.45;
+    n = normalToUniform(n, 0.18);
+    return n;
 }
 
 float GetPerlinNoise2D(float2 pos)
@@ -68,7 +69,8 @@ float GetPerlinNoise2D(float2 pos)
     float ix1 = PowLerp(g01, g11, w.x);
 	//Interpolate on y axis
     float n = PowLerp(ix0, ix1, w.y) * 0.74 + 0.49;
-    return n * n;
+	n = normalToUniform(n, 0.17);
+    return n;
 }
 
 float GetPerlinNoise3D(float3 pos)
@@ -94,7 +96,8 @@ float GetPerlinNoise3D(float3 pos)
 	float ixy1 = PowLerp(ix01, ix11, w.y);
 	//Interpolate on z axis
     float n = PowLerp(ixy0, ixy1, w.z) * 0.8 + 0.48;
-    return n * n;
+    n = normalToUniform(n, 0.16);
+    return n;
 }
 
 float GetPerlinNoise4D(float4 pos)
@@ -137,7 +140,8 @@ float GetPerlinNoise4D(float4 pos)
 	float iz1 = PowLerp(iy01, iy11, w.z);
 	//Interpolate on w axis
     float n = PowLerp(iz0, iz1, w.w) * 0.9 + 0.5;
-    return n * n;
+    n = normalToUniform(n, 0.15);
+    return n;
 }
 
 float ComputePerlinNoise1D(float pos, FractalSettings settings)

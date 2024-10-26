@@ -42,8 +42,6 @@ void ComputeSimplexNoise3D_half(half3 pos, half octaves, half lacunarity, half p
 	result = ComputeSimplexNoise3D(pos, settings);
 }
 
-//Not yet implemented
-/*
 void ComputeSimplexNoise4D_float(float4 pos, float octaves, float lacunarity, float persistence, out float result)
 {
 	SETUP_SETTINGS
@@ -55,4 +53,3 @@ void ComputeSimplexNoise4D_half(half4 pos, half octaves, half lacunarity, half p
 	SETUP_SETTINGS
 	result = ComputeSimplexNoise4D(pos, settings);
 }
-*/

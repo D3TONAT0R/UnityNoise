@@ -85,7 +85,7 @@ float GetSimplexNoise1D(float x)
 			// The maximum value of this noise is 8*(3/4)^4 = 2.53125
 			// A factor of 0.395 scales to fit exactly within [-1,1]
     float n = (0.21 * (n0 + n1)) + 0.5;
-    return n * n;
+    return n;
 }
 
 float GetSimplexNoise2D(float2 pos)
@@ -168,9 +168,8 @@ float GetSimplexNoise2D(float2 pos)
 
     // Add contributions from each corner to get the final noise value.
     // The result is scaled to return values in the interval [-1,1].
-    float n = 22.0 * (n0 + n1 + n2);
-    n = n + 0.5;
-    return n * n;
+    float n = 23.2 * (n0 + n1 + n2) + 0.5;
+    return n;
 }
 
 float GetSimplexNoise3D(float3 pos)
@@ -325,9 +324,8 @@ float GetSimplexNoise3D(float3 pos)
 
 	// Add contributions from each corner to get the final noise value.
 	// The result is scaled to stay just inside [-1,1]
-    float n = (16.0 * (n0 + n1 + n2 + n3)) + 0.5; // TODO: The scale factor is preliminary!
-    n *= n;
-    return saturate(n);
+    float n = (18.0 * (n0 + n1 + n2 + n3)) + 0.5;
+    return normalToUniform(n, 0.27);
 }
 
 float GetSimplexNoise4D(float4 pos)
@@ -451,7 +449,8 @@ float GetSimplexNoise4D(float4 pos)
     // Add contributions from each corner to get the final noise value.
     // The result is scaled to stay just inside [-1,1]
     float n = (13.0 * (n0 + n1 + n2 + n3 + n4)) + 0.5;
-    return n * n;
+    n = normalToUniform(n, 0.16);
+    return n;
 }
 
 
