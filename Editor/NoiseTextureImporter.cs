@@ -214,7 +214,7 @@ namespace UnityNoiseEditor
 			else return generator.GetNoise3D(pos, parameters);
 		}
 
-		[MenuItem("Assets/Create/Texture2D/Perlin Noise Texture")]
-		public static void CreateCheckerTextureAsset() => ProjectWindowUtil.CreateAssetWithContent("New Perlin Texture.noise", "");
+		[MenuItem("Assets/Create/Texture/Noise Texture")]
+		public static void CreateCheckerTextureAsset() => ProjectWindowUtil.CreateAssetWithContent("New Noise Texture.noise", "");
 	}
 }
