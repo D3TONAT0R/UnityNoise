@@ -1,7 +1,7 @@
 # UnityNoise
 
 [![Unity](https://img.shields.io/badge/Unity-2019.4+-blue.svg)](https://unity3d.com/get-unity/download)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
 
 ## Description
 
