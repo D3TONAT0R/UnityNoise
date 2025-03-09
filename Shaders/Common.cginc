@@ -14,7 +14,7 @@ struct FractalSettings
 //TODO: find different magic numbers to avoid patterns
 half hash(float4 pos)
 {
-    return frac(sin(dot(pos, float4(12.9898, 378.233, 45.164, 94.673))) * 43758.5453) * 2.0 - 1.0;
+    return frac(sin(dot(pos, float4(12.9898, 13.231, 45.164, 94.673))) * 43758.5453) * 2.0 - 1.0;
 }
 			
 half hash(float pos)
